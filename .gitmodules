@@ -1,0 +1,3 @@
+[submodule "glink"]
+	path = glink
+	url = git@172.16.63.22:GduCommResource/glink.git
