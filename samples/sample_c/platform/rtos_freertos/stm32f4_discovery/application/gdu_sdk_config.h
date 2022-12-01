@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
-//#define CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
+#define CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
 
 #define CONFIG_MODULE_SAMPLE_CAMERA_ON
 
@@ -42,10 +42,10 @@ extern "C" {
 
 #ifdef USE_BOOTLOADER
 //Attention: If you don’t need to upgrade, you can uncomment it and change flash size from 0x70000 to 0xD0000 to build all functions.
-//#define CONFIG_MODULE_SAMPLE_UPGRADE_ON
+#define CONFIG_MODULE_SAMPLE_UPGRADE_ON
 #endif
 
-#ifndef CONFIG_MODULE_SAMPLE_UPGRADE_ON
+//#ifndef CONFIG_MODULE_SAMPLE_UPGRADE_ON
 
 #define CONFIG_MODULE_SAMPLE_GIMBAL_ON
 
@@ -61,7 +61,11 @@ extern "C" {
 
 #define CONFIG_MODULE_SAMPLE_POSITIONING_ON
 
-#endif
+#define CONFIG_MODULE_SAMPLE_FLIGHT_CTRL_ON
+
+//#define CONFIG_MODULE_PPK_ON
+
+//#endif
 
 /* Exported types ------------------------------------------------------------*/
 

@@ -102,7 +102,9 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
         ../../../../../module_sample/positioning/*.c
         ../../../../../module_sample/widget/*.c
         ../../../../../module_sample/utils/*.c
+        ../../../../../module_sample/ppk/*.c
 		../../../common/osal/*.c
+        ../../../../../module_sample/power_management/*.c
         )
 
 file(GLOB_RECURSE SOURCES

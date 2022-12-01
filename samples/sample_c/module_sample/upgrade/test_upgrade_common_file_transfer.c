@@ -60,6 +60,13 @@ T_GduReturnCode GduTestCommonFileTransfer_Start(const T_GduUpgradeFileInfo *file
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+int GduTestCommonFileTransfer_getTransferProccess(void)
+{
+	int proccess = (int)((s_alreadyTransferFileSize * 100 / s_upgradeFileInfo.fileSize));
+
+	return proccess;
+}
+
 T_GduReturnCode GduTestCommonFileTransfer_Transfer(const uint8_t *data, uint16_t dataLen)
 {
     T_GduReturnCode returnCode;

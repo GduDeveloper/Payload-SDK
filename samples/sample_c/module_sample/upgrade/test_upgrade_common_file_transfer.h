@@ -42,6 +42,7 @@ extern "C" {
 T_GduReturnCode GduTestCommonFileTransfer_Start(const T_GduUpgradeFileInfo *fileInfo);
 T_GduReturnCode GduTestCommonFileTransfer_Transfer(const uint8_t *data, uint16_t dataLen);
 T_GduReturnCode GduTestCommonFileTransfer_Finish(const uint8_t md5[GDU_MD5_BUFFER_LEN]);
+int GduTestCommonFileTransfer_getTransferProccess(void);
 
 #ifdef __cplusplus
 }

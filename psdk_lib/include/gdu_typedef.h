@@ -43,7 +43,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 #define GDU_PI                     (3.14159265358979323846f)
-#define GDU_FILE_NAME_SIZE_MAX     256
+#define GDU_FILE_NAME_SIZE_MAX     64
 #define GDU_FILE_PATH_SIZE_MAX     (GDU_FILE_NAME_SIZE_MAX + 256)
 #define GDU_IP_ADDR_STR_SIZE_MAX   15
 #define GDU_MD5_BUFFER_LEN         16

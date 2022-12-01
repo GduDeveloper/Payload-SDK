@@ -88,11 +88,13 @@ static void *GduTest_PositioningTask(void *arg)
     uint64_t ppsNewestTriggerTimeUs = 0;
 	uint64_t posTime = 0;
     uint32_t currentTimeMs = 0;
+	uint64_t currentTimeUs = 0;
     T_GduPositioningEventInfo eventInfo[GDU_TEST_POSITIONING_EVENT_COUNT] = {0};
     T_GduPositioningPositionInfo positionInfo[GDU_TEST_POSITIONING_EVENT_COUNT] = {0};
     T_GduTimeSyncAircraftTime aircraftTime = {0};
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
     uint8_t totalSatelliteNumber = 0;
+	uint32_t beforeTime = 0, afterTime = 0;
 
     USER_UTIL_UNUSED(arg);
 
@@ -121,7 +123,8 @@ static void *GduTest_PositioningTask(void *arg)
             eventInfo[i].eventSetIndex = s_eventIndex;
             eventInfo[i].targetPointIndex = i;
 
-            gduStat = GduTimeSync_TransferToAircraftTime((currentTimeMs - (i+1) * 200) * 1000, &aircraftTime);
+			currentTimeUs = ((uint64_t)currentTimeMs - (i+1) * 300) * 1000;
+            gduStat = GduTimeSync_TransferToAircraftTime(currentTimeUs, &aircraftTime);
             if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("transfer to aircraft time error: 0x%08llX.", gduStat);
                 continue;
@@ -137,7 +140,7 @@ static void *GduTest_PositioningTask(void *arg)
         }
 
         USER_LOG_DEBUG("request position of target points success.");
-        USER_LOG_DEBUG("detail position information:******************************************************************************");
+        USER_LOG_DEBUG("detail position information:*************");
         for (i = 0; i < GDU_TEST_POSITIONING_EVENT_COUNT; ++i) {
             USER_LOG_DEBUG("position solution property: %d. eventTime:(%d-%d-%d %d:%d:%d:%d)", positionInfo[i].positionSolutionProperty, eventInfo[i].eventTime.year, eventInfo[i].eventTime.month, eventInfo[i].eventTime.day, \
 																								eventInfo[i].eventTime.hour, eventInfo[i].eventTime.minute , eventInfo[i].eventTime.second, eventInfo[i].eventTime.microsecond);
@@ -148,9 +151,9 @@ static void *GduTest_PositioningTask(void *arg)
 //                           positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.x,
 //                           positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.y,
 //                           positionInfo[i].offsetBetweenMainAntennaAndTargetPoint.z);
-            USER_LOG_DEBUG("longitude: %.8f\tlatitude: %.8f\theight: %.8f",
-                           positionInfo[i].targetPointPosition.longitude,
-                           positionInfo[i].targetPointPosition.latitude,
+           USER_LOG_DEBUG("longitude: %.8f\tlatitude: %.8f\theight: %.8f",
+                          positionInfo[i].targetPointPosition.longitude,
+                          positionInfo[i].targetPointPosition.latitude,
                            positionInfo[i].targetPointPosition.height);
 //            USER_LOG_DEBUG(
 //                "longStandardDeviation: %.8f\tlatStandardDeviation: %.8f\thgtStandardDeviation: %.8f",
@@ -158,7 +161,7 @@ static void *GduTest_PositioningTask(void *arg)
 //                positionInfo[i].targetPointPositionStandardDeviation.latitude,
 //                positionInfo[i].targetPointPositionStandardDeviation.height);
         }
-
+		
         s_eventIndex++;
     }
 }

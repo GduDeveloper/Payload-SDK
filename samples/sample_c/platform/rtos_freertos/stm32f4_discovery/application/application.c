@@ -29,10 +29,10 @@
 #include "usb_host.h"
 #include "led.h"
 #include "pps.h"
-//#include "apply_high_power.h"
+#include "apply_high_power.h"
 #include "uart.h"
 #include "flash_if.h"
-//#include "upgrade_platform_opt_stm32.h"
+#include "upgrade_platform_opt_stm32.h"
 
 #include "application.h"
 #include "hal_uart.h"
@@ -46,17 +46,17 @@
 #include "utils/util_misc.h"
 #include "camera_emu/test_payload_cam_emu_base.h"
 #include "fc_subscription/test_fc_subscription.h"
-//#include "gimbal_emu/test_payload_gimbal_emu.h"
+#include "gimbal_emu/test_payload_gimbal_emu.h"
  #include "time_sync/test_time_sync.h"
 //#include "xport/test_payload_xport.h"
 //#include "payload_collaboration/test_payload_collaboration.h"
-//#include "widget/test_widget.h"
+#include "widget/test_widget.h"
 //#include "widget_interaction_test/test_widget_interaction.h"
 //#include "data_transmission/test_data_transmission.h"
 
 //#include "positioning/test_positioning.h"
-//#include "upgrade/test_upgrade.h"
-//#include "power_management/test_power_management.h"
+#include "upgrade/test_upgrade.h"
+#include "power_management/test_power_management.h"
 
 /* Private constants ---------------------------------------------------------*/
 #define RUN_INDICATE_TASK_FREQ_1HZ        1
@@ -156,6 +156,7 @@ void GduUser_StartTask(void const *argument)
         goto out;
     }
 
+    //returnCode = GduCore_SetAlias("PSDK_APPALIAS");
     returnCode = GduCore_SetAlias("PSDK_APPALIAS");
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("set alias error");
@@ -200,19 +201,19 @@ void GduUser_StartTask(void const *argument)
         }
 #endif
 
-	//#ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
-	//#if GDU_USE_WIDGET_INTERACTION
-	//        returnCode = GduTest_WidgetInteractionStartService();
-	//        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-	//            USER_LOG_ERROR("widget sample init error");
-	//        }
-	//#else
-	//        returnCode = GduTest_WidgetStartService();
-	//        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-	//            USER_LOG_ERROR("widget sample init error");
-	//        }
-	//#endif
-	//#endif
+	#ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
+	#if GDU_USE_WIDGET_INTERACTION
+	        returnCode = GduTest_WidgetInteractionStartService();
+	        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+	            USER_LOG_ERROR("widget sample init error");
+	        }
+	#else
+	        returnCode = GduTest_WidgetStartService();
+	        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+	            USER_LOG_ERROR("widget sample init error");
+	        }
+	#endif
+	#endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
         returnCode = GduTest_DataTransmissionStartService();
@@ -280,6 +281,19 @@ void GduUser_StartTask(void const *argument)
 		}
 #endif
 
+#ifdef CONFIG_MODULE_SAMPLE_FLIGHT_CTRL_ON
+		if (GduFlightController_Init() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("psdk flight controller init error");
+		}
+#endif
+
+#ifdef CONFIG_MODULE_PPK_ON
+		if (GduTest_PPKStartService() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("psdk ppk init error");
+		}
+#endif
+
+
 #ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
 		T_GduTestUpgradePlatformOpt stm32UpgradePlatformOpt = {
 			.rebootSystem = GduUpgradePlatformStm32_RebootSystem,
@@ -295,7 +309,7 @@ void GduUser_StartTask(void const *argument)
 		};
 		T_GduTestUpgradeConfig testUpgradeConfig = {
 			.firmwareVersion = {1, 0, 0, 0},
-			.transferType = GDU_FIRMWARE_TRANSFER_TYPE_DCFTP,
+			.transferType = GDU_FIRMWARE_TRANSFER_TYPE_UART,
 			.needReplaceProgramBeforeReboot = false
 		};
 		if (GduTest_UpgradeStartService(&stm32UpgradePlatformOpt, testUpgradeConfig) !=
@@ -462,4 +476,5 @@ static T_GduReturnCode GduUser_PrintConsole(const uint8_t *data, uint16_t dataLe
 }
 #endif
 /****************** (C) COPYRIGHT GDU Innovations *****END OF FILE****/
+
 

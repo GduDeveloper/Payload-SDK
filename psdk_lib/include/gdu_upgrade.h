@@ -49,15 +49,7 @@ typedef enum {
      * password:DJi_#$31
      * You can get guide about FTP service deployment on https://developer.gdu.com/payload-sdk/documentation
      */
-    GDU_FIRMWARE_TRANSFER_TYPE_FTP = 0,
-    /*!
-     * @brief DCFTP firmware transfer type.
-     * @details DCFTP (GDU Common File Transfer Protocol) is a private protocol used to transfer file on GDU Product.
-     * Users can get file data by command callbacks, see :: T_GduUpgradeDcftpFileTransferOpt.
-     * @note This transfer type is used to support RTOS platform or payload don't have network port. The transfer speed
-     * is very slow compare to FTP because it uses low speed transfer channel.
-     */
-    GDU_FIRMWARE_TRANSFER_TYPE_DCFTP,
+    GDU_FIRMWARE_TRANSFER_TYPE_UART = 0,
 } E_GduFirmwareTransferType;
 
 typedef enum {
@@ -132,8 +124,6 @@ typedef struct {
     /*! The firmware transfer type for upgrade. */
     E_GduFirmwareTransferType transferType;
 
-    /*! If transferType is GDU_FIRMWARE_TRANSFER_TYPE_FTP, need support ftpTransferInfo. */
-    T_GduUpgradeFtpFileTransferInfo ftpTransferInfo;
     /*! If transferType is GDU_FIRMWARE_TRANSFER_TYPE_DCFTP, need support dcftpFileTransferOpt. */
     T_GduUpgradeDcftpFileTransferOpt dcftpFileTransferOpt;
 } T_GduFirmwareTransferInfo;

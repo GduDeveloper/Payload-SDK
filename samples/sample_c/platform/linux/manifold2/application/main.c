@@ -50,7 +50,7 @@
 //#include "../hal/hal_usb_bulk.h"
 #include "gdu_sdk_app_info.h"
 #include "gdu_aircraft_info.h"
-//#include "widget/test_widget.h"
+#include "widget/test_widget.h"
 //#include "widget_interaction_test/test_widget_interaction.h"
 //#include "data_transmission/test_data_transmission.h"
 #include "gdu_sdk_config.h"
@@ -306,11 +306,16 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
+#if 0
 		if (aircraftInfoBaseInfo.gduAdapterType == GDU_SDK_ADAPTER_TYPE_SKYPORT_V2 ||
 				aircraftInfoBaseInfo.gduAdapterType == GDU_SDK_ADAPTER_TYPE_NONE) {
 			if (GduTest_GimbalStartService() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
 				USER_LOG_ERROR("psdk gimbal init error");
 			}
+		}
+#endif
+		if (GduTest_GimbalStartService() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("psdk gimbal init error");
 		}
 #endif
 

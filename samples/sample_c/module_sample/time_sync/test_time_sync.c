@@ -133,6 +133,7 @@ static void *GduTest_TimeSyncTask(void *arg)
 {
     T_GduReturnCode gduStat;
     uint32_t currentTimeMs = 0;
+	uint64_t currentTimeUs = 0;
     T_GduTimeSyncAircraftTime aircraftTime = {0};
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
     uint8_t totalSatelliteNumber = 0;
@@ -154,7 +155,9 @@ static void *GduTest_TimeSyncTask(void *arg)
             continue;
         }
 
-        gduStat = GduTimeSync_TransferToAircraftTime(currentTimeMs * 1000, &aircraftTime);
+		currentTimeUs = (uint64_t)currentTimeMs * 1000;
+
+        gduStat = GduTimeSync_TransferToAircraftTime(currentTimeUs, &aircraftTime);
         if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("transfer to aircraft time error: 0x%08llX.", gduStat);
             continue;

@@ -58,20 +58,23 @@ void GduTest_PpsIrqHandler(void)
         psdkStat = Osal_GetTimeMs(&timeMs);
         if (psdkStat == GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
             s_ppsNewestTriggerLocalTimeMs = timeMs;
-            //USER_LOG_DEBUG("pps interrupter*******************************");
     }
-    //USER_LOG_DEBUG("pps interrupter*******************************");
 }
 
 T_GduReturnCode GduTest_GetNewestPpsTriggerLocalTimeUs(uint64_t *localTimeUs)
 {
+	static int counter = 0;
+	
     if (localTimeUs == NULL) {
         USER_LOG_ERROR("input pointer is null.");
         return GDU_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
     }
 
     if (s_ppsNewestTriggerLocalTimeMs == 0) {
-        USER_LOG_WARN("pps have not been triggered.");
+		if(counter++ % 500 == 0)
+		{
+			USER_LOG_WARN("pps have not been triggered.");
+		}
         return GDU_ERROR_SYSTEM_MODULE_CODE_BUSY;
     }
 
@@ -96,6 +99,12 @@ T_GduReturnCode GduTest_PpsSignalResponseInit(void)
     /* Enable and set EXTI Line Interrupt to the lowest priority */
     HAL_NVIC_SetPriority(PPS_IRQn, PPS_IRQ_PRIO_PRE, PPS_IRQ_PRIO_SUB);
     HAL_NVIC_EnableIRQ(PPS_IRQn);
+
+
+//    GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+//    GPIO_InitStructure.Pull = GPIO_PULLDOWN;
+//    GPIO_InitStructure.Pin = GPIO_PIN_3;
+//    HAL_GPIO_Init(PPS_PORT, &GPIO_InitStructure);
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

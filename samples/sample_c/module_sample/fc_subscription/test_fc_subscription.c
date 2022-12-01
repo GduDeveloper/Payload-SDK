@@ -45,6 +45,16 @@ static bool s_userFcSubscriptionDataShow = false;
 static uint8_t s_totalSatelliteNumberUsed = 0;
 
 /* Exported functions definition ---------------------------------------------*/
+
+T_GduReturnCode GduReceiveGpsPositionCallback(const uint8_t *data, uint16_t dataSize, const T_GduDataTimestamp *timestamp)
+{
+	T_GduFcSubscriptionGpsPosition *pos = (T_GduFcSubscriptionGpsPosition *)data;
+
+	//USER_LOG_DEBUG("gps position is :%d, %d, %d", pos->x, pos->y, pos->z);
+
+	return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
 T_GduReturnCode GduTest_FcSubscriptionStartService(void)
 {
     T_GduReturnCode gduStat;
@@ -58,49 +68,48 @@ T_GduReturnCode GduTest_FcSubscriptionStartService(void)
         return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    // gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_QUATERNION, GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
-    //                                            GduTest_FcSubscriptionReceiveQuaternionCallback);
-    // if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    //     USER_LOG_ERROR("Subscribe topic quaternion error.");
-    //     return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    // } else {
-    //     USER_LOG_DEBUG("Subscribe topic quaternion success.");
-    // }
+//    gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_QUATERNION, GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
+//                                               GduTest_FcSubscriptionReceiveQuaternionCallback);
+//    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+//        USER_LOG_ERROR("Subscribe topic quaternion error.");
+//        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+//    } else {
+//        USER_LOG_DEBUG("Subscribe topic quaternion success.");
+//    }
+//
+//    gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
+//                                               NULL);
+//    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+//        USER_LOG_ERROR("Subscribe topic velocity error.");
+//        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+//    } else {
+//        USER_LOG_DEBUG("Subscribe topic velocity success.");
+//    }
 
-    // gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
-    //                                            NULL);
-    // if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    //     USER_LOG_ERROR("Subscribe topic velocity error.");
-    //     return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    // } else {
-    //     USER_LOG_DEBUG("Subscribe topic velocity success.");
-    // }
+    gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_POSITION, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
+                                               GduReceiveGpsPositionCallback);
+    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Subscribe topic gps position error.");
+        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+    } else {
+        USER_LOG_DEBUG("Subscribe topic gps position success.");
+    }
 
-    // gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_POSITION, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
-    //                                            NULL);
+//    gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_DETAILS, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
+//                                               NULL);
+//    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+//        USER_LOG_ERROR("Subscribe topic gps details error.");
+//        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+//    } else {
+//        USER_LOG_DEBUG("Subscribe topic gps details success.");
+//    }
 
-    // if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    //     USER_LOG_ERROR("Subscribe topic gps position error.");
-    //     return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    // } else {
-    //     USER_LOG_DEBUG("Subscribe topic gps position success.");
-    // }
-
-    // gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_DETAILS, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
-    //                                            NULL);
-    // if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    //     USER_LOG_ERROR("Subscribe topic gps details error.");
-    //     return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    // } else {
-    //     USER_LOG_DEBUG("Subscribe topic gps details success.");
-    // }
-
-    // if (osalHandler->TaskCreate("user_subscription_task", UserFcSubscription_Task,
-    //                             FC_SUBSCRIPTION_TASK_STACK_SIZE, NULL, &s_userFcSubscriptionThread) !=
-    //     GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-    //     USER_LOG_ERROR("user data subscription task create error.");
-    //     return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    // }
+     if (osalHandler->TaskCreate("user_subscription_task", UserFcSubscription_Task,
+                                 FC_SUBSCRIPTION_TASK_STACK_SIZE, NULL, &s_userFcSubscriptionThread) !=
+         GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+         USER_LOG_ERROR("user data subscription task create error.");
+         return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
+     }
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
@@ -242,6 +251,7 @@ static void *UserFcSubscription_Task(void *arg)
     T_GduFcSubscriptionGpsPosition gpsPosition = {0};
     T_GduFcSubscriptionGpsDetails gpsDetails = {0};
     T_GduOsalHandler *osalHandler = NULL;
+	T_GduFcSubscriptionGpsTime gpsTime = 0;
 
     USER_UTIL_UNUSED(arg);
     osalHandler = GduPlatform_GetOsalHandler();
@@ -280,6 +290,22 @@ static void *UserFcSubscription_Task(void *arg)
                                                           &timestamp);
         if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("get value of topic gps details error.");
+        }
+
+        gduStat = GduFcSubscription_GetLatestValueOfTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_TIME,
+                                                          (uint8_t *) &gpsTime,
+                                                          sizeof(T_GduFcSubscriptionGpsTime),
+                                                          &timestamp);
+        if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("get value of topic gps time error.");
+        }
+
+        gduStat = GduFcSubscription_GetLatestValueOfTopic(GDU_FC_SUBSCRIPTION_TOPIC_GPS_DATE,
+                                                          (uint8_t *) &gpsTime,
+                                                          sizeof(T_GduFcSubscriptionGpsTime),
+                                                          &timestamp);
+        if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("get value of topic gps time error.");
         }
 
         if (s_userFcSubscriptionDataShow == true) {

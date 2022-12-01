@@ -67,7 +67,6 @@ GduTest_UpgradeStartService(const T_GduTestUpgradePlatformOpt *upgradePlatformOp
         .currentFirmwareVersion = testUpgradeConfig.firmwareVersion,
         .firmwareTransferInfo = {
             .transferType = testUpgradeConfig.transferType,
-            .ftpTransferInfo.port = 21,
             .dcftpFileTransferOpt = {
                 .start = GduTestCommonFileTransfer_Start,
                 .transfer = GduTestCommonFileTransfer_Transfer,
@@ -107,15 +106,6 @@ GduTest_UpgradeStartService(const T_GduTestUpgradePlatformOpt *upgradePlatformOp
         USER_LOG_ERROR("Clean upgrade reboot state error");
     }
 
-    osalHandler->MutexLock(s_upgradeStateMutex);
-    if (isUpgradeReboot == true) {
-        s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_END;
-        s_upgradeState.upgradeEndInfo = upgradeEndInfo;
-    } else {
-        s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_IDLE;
-    }
-    osalHandler->MutexUnlock(s_upgradeStateMutex);
-
     returnCode = GduUpgrade_Init(&upgradeConfig);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("GduUpgrade_Init error, return code = %d", returnCode);
@@ -147,7 +137,7 @@ GduTest_UpgradeStartService(const T_GduTestUpgradePlatformOpt *upgradePlatformOp
         return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
-    return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+
 }
 
 /* Private functions definition-----------------------------------------------*/
@@ -184,7 +174,7 @@ static T_GduReturnCode GduTest_FinishUpgrade(void)
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
 
     osalHandler->MutexLock(s_upgradeStateMutex);
-    s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_IDLE;
+    s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_END;
     osalHandler->MutexUnlock(s_upgradeStateMutex);
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
@@ -245,63 +235,17 @@ static void *GduTest_UpgradeProcessTask(void *arg)
         osalHandler->MutexUnlock(s_upgradeStateMutex);
 
         if (tempUpgradeState.upgradeStage == GDU_UPGRADE_STAGE_ONGOING) {
-            if (s_isNeedReplaceProgramBeforeReboot) {
-                // Step 1 : Replace old program
-                returnCode = GduTest_ReplaceOldProgram();
-                if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_ERROR("Replace firmware error, return code = 0x%08llX", returnCode);
-                    osalHandler->MutexLock(s_upgradeStateMutex);
-                    s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_END;
-                    s_upgradeState.upgradeEndInfo.upgradeEndState = GDU_UPGRADE_END_STATE_UNKNOWN_ERROR;
-                    osalHandler->MutexUnlock(s_upgradeStateMutex);
-                    continue;
-                }
-
-                osalHandler->TaskSleepMs(1000);
-                osalHandler->MutexLock(s_upgradeStateMutex);
-                s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_ONGOING;
-                s_upgradeState.upgradeOngoingInfo.upgradeProgress = 20;
-                GduUpgrade_PushUpgradeState(&s_upgradeState);
-                osalHandler->MutexUnlock(s_upgradeStateMutex);
-
-                // Step 2 : Clean upgrade program file store area
-                returnCode = GduTest_CleanUpgradeProgramFileStoreArea();
-                if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_ERROR("Clean upgrade file dir error, please check dir permission");
-                    osalHandler->MutexLock(s_upgradeStateMutex);
-                    s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_END;
-                    s_upgradeState.upgradeEndInfo.upgradeEndState = GDU_UPGRADE_END_STATE_UNKNOWN_ERROR;
-                    osalHandler->MutexUnlock(s_upgradeStateMutex);
-                    continue;
-                }
-
-                osalHandler->TaskSleepMs(1000);
-                osalHandler->MutexLock(s_upgradeStateMutex);
-                s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_ONGOING;
-                s_upgradeState.upgradeOngoingInfo.upgradeProgress = 30;
-                GduUpgrade_PushUpgradeState(&s_upgradeState);
-                osalHandler->MutexUnlock(s_upgradeStateMutex);
-            }
-
-            //attention emulation upgrade progress, user don't need this process
-            do {
-                osalHandler->TaskSleepMs(1000);
-                osalHandler->MutexLock(s_upgradeStateMutex);
-                s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_ONGOING;
-                s_upgradeState.upgradeOngoingInfo.upgradeProgress += 10;
-                tempUpgradeState = s_upgradeState;
-                GduUpgrade_PushUpgradeState(&s_upgradeState);
-                osalHandler->MutexUnlock(s_upgradeStateMutex);
-            } while (tempUpgradeState.upgradeOngoingInfo.upgradeProgress < 100);
-
-            // Step 3 : Reboot device
+			
+            osalHandler->TaskSleepMs(1000); // sleep 1000ms to ensure push send terminal.
+            
             osalHandler->MutexLock(s_upgradeStateMutex);
-            s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_DEVICE_REBOOT;
-            s_upgradeState.upgradeRebootInfo.rebootTimeout = GDU_TEST_UPGRADE_REBOOT_TIMEOUT;
             GduUpgrade_PushUpgradeState(&s_upgradeState);
             osalHandler->MutexUnlock(s_upgradeStateMutex);
-            osalHandler->TaskSleepMs(1000); // sleep 1000ms to ensure push send terminal.
 
+			//USER_LOG_DEBUG("upgrading,  upgradeStage:%d,  process:%d", tempUpgradeState.upgradeStage, GduTestCommonFileTransfer_getTransferProccess());
+        } 
+		else if (s_upgradeState.upgradeStage == GDU_UPGRADE_STAGE_END) 
+		{
             upgradeEndInfo.upgradeEndState = GDU_UPGRADE_END_STATE_SUCCESS;
             returnCode = GduTest_SetUpgradeRebootState(&upgradeEndInfo);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -313,6 +257,19 @@ static void *GduTest_UpgradeProcessTask(void *arg)
                 continue;
             }
 
+            osalHandler->MutexLock(s_upgradeStateMutex);
+            s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_DEVICE_REBOOT;
+            s_upgradeState.upgradeRebootInfo.rebootTimeout = GDU_TEST_UPGRADE_REBOOT_TIMEOUT;
+            GduUpgrade_PushUpgradeState(&s_upgradeState);
+            osalHandler->MutexUnlock(s_upgradeStateMutex);
+			osalHandler->TaskSleepMs(500);
+			USER_LOG_DEBUG("upgrade end");
+
+        }
+		else if (s_upgradeState.upgradeStage == GDU_UPGRADE_STAGE_DEVICE_REBOOT) 
+		{
+			USER_LOG_DEBUG("now reboot to upgrade");
+			osalHandler->TaskSleepMs(500);
             returnCode = GduTest_RebootSystem();
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Reboot system error");
@@ -322,14 +279,12 @@ static void *GduTest_UpgradeProcessTask(void *arg)
                 osalHandler->MutexUnlock(s_upgradeStateMutex);
                 continue;
             }
-            while (1) {
-                osalHandler->TaskSleepMs(500);
-            }
-        } else if (s_upgradeState.upgradeStage == GDU_UPGRADE_STAGE_END) {
-            osalHandler->MutexLock(s_upgradeStateMutex);
-            GduUpgrade_PushUpgradeState(&s_upgradeState);
-            osalHandler->MutexUnlock(s_upgradeStateMutex);
-        }
+			else
+			{
+				s_upgradeState.upgradeStage = GDU_UPGRADE_STAGE_IDLE;
+			}
+		}
+
 
         osalHandler->TaskSleepMs(500);
     }

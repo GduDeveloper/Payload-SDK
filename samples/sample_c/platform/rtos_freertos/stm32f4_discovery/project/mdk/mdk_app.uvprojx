@@ -53,8 +53,8 @@
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
-          <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <DebugInformation>0</DebugInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -80,9 +80,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>0</RunUserProg1>
+            <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe .\Objects\mdk_app.axf --bin --output .\dji_sdk_demo_rtos.bin</UserProg1Name>
+            <UserProg1Name>C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe .\Objects\mdk_app.axf --bin --output .\gdu_sdk_demo_rtos.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4100</DriverSelection>
+            <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -336,7 +336,7 @@
               <MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
               <Define>USE_HAL_DRIVER, STM32F407xx, SYSTEM_ARCH_RTOS=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\psdk_lib\lib;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK_report;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np</IncludePath>
+              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\psdk_lib\lib;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK_report;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\..\..\glink_ftp;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -620,6 +620,16 @@
               <FileName>gdu_ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\drivers\BSP\gdu_ringbuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>apply_high_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\drivers\BSP\apply_high_power.c</FilePath>
+            </File>
+            <File>
+              <FileName>upgrade_platform_opt_stm32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\drivers\BSP\upgrade_platform_opt_stm32.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1668,6 +1678,46 @@
               <FileName>util_time.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\module_sample\utils\util_time.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_power_management.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\power_management\test_power_management.c</FilePath>
+            </File>
+            <File>
+              <FileName>file_binary_array_list_en.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\widget\file_binary_array_list_en.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_widget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\widget\test_widget.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_widget_speaker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\widget\test_widget_speaker.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_upgrade.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\upgrade\test_upgrade.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_upgrade_common_file_transfer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\upgrade\test_upgrade_common_file_transfer.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_upgrade_platform_opt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\upgrade\test_upgrade_platform_opt.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_flight_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\flight_control\test_flight_control.c</FilePath>
             </File>
           </Files>
         </Group>
