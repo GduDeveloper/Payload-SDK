@@ -48,16 +48,22 @@ file(GLOB_RECURSE MODULE_SAMPLE_SRC
 	)
 
 #file(GLOB_RECURSE MODULE_SAMPLE_MEDIA ../../../../../psdk_lib/media/*.c)
-file(GLOB_RECURSE LIB_SRC ../../../../../psdk_lib/lib/*.c)
+#file(GLOB_RECURSE LIB_SRC ../../../../../psdk_lib/lib/*.c)
+file(GLOB_RECURSE LIB_SRC ../../../../../psdk_lib/lib_src/*.c)
+file(GLOB_RECURSE LIB_CJSON ../../../../../psdk_lib/cJSON/*.c)
 
 include_directories(../../../module_sample)
+include_directories(../../../module_sample/utils)
 include_directories(../common)
 
 #include_directories(../../../../../psdk_lib/media)
+include_directories(../../../../../psdk_lib/cJSON)
 include_directories(../../../../../psdk_lib/media/lib_include)
 include_directories(../../../../../samples/sample_c/module_sample)
+include_directories(../../../../../samples/sample_c/platform/linux/manifold2/application)
 include_directories(../../../../../psdk_lib/include)
 include_directories(../../../../../glink)
+include_directories(../../../../../glink_ftp)
 include_directories(../../../../../glink/glink_m)
 include_directories(../../../../../glink/glink_np)
 #link_directories(../../../../../psdk_lib/lib/${TOOLCHAIN_NAME})
@@ -77,7 +83,8 @@ add_executable(${PROJECT_NAME}
         ${MODULE_COMMON_SRC}
  #       ${MODULE_SAMPLE_MEDIA}
         ${MODULE_HAL_SRC}
-        ${LIB_SRC})
+        ${LIB_SRC}
+        ${LIB_CJSON})
 
 #target_link_libraries(${PROJECT_NAME} m usb-1.0 mk_api)
 target_link_libraries(${PROJECT_NAME} m usb-1.0)

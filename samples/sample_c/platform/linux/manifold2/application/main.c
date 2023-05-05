@@ -110,13 +110,13 @@ int main(int argc, char **argv)
 		.Free = Osal_Free,
 		.GetTimeMs = Osal_GetTimeMs,
 		.GetTimeUs = Osal_GetTimeUs,
-		.GetIPAddr = Osal_GetTimeUs,
+		//.GetIPAddr = Osal_GetIpAddr,
 
 	};
 	T_GduLoggerConsole printConsole = {
 		.func = GduUser_PrintConsole,
-		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
-		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
+		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
+		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
 		.isSupportColor = true,
 	};
 

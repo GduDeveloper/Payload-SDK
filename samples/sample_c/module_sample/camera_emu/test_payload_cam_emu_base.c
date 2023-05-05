@@ -61,9 +61,9 @@
 
 // Attention: you can select which camera function you want to run, default: all on.
 #define USER_CAMERA_EMU_METERING_ON                1
-//#define USER_CAMERA_EMU_FOCUS_ON                   1
-//#define USER_CAMERA_EMU_HYBRID_ZOOM_ON             1
-//#define USER_CAMERA_EMU_TAP_ZOOM_ON                1
+#define USER_CAMERA_EMU_FOCUS_ON                   1
+#define USER_CAMERA_EMU_HYBRID_ZOOM_ON             1
+#define USER_CAMERA_EMU_TAP_ZOOM_ON                1
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -280,6 +280,7 @@ out:
 
 static T_GduReturnCode StartShootPhoto(void)
 {
+	static uint16_t ShootPhoto = 0;
     T_GduReturnCode returnCode;
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
 
@@ -289,7 +290,9 @@ static T_GduReturnCode StartShootPhoto(void)
         return returnCode;
     }
 
-    USER_LOG_INFO("start shoot photo");
+	ShootPhoto ++;
+
+    USER_LOG_INFO("start shoot photo *** %d ",ShootPhoto);
     s_cameraState.isStoring = true;
 
     if (s_cameraShootPhotoMode == GDU_CAMERA_SHOOT_PHOTO_MODE_SINGLE) {

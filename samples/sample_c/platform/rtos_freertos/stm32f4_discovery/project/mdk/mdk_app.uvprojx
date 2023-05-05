@@ -53,8 +53,8 @@
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
-          <DebugInformation>0</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <DebugInformation>1</DebugInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -80,7 +80,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe .\Objects\mdk_app.axf --bin --output .\gdu_sdk_demo_rtos.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
@@ -336,7 +336,7 @@
               <MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
               <Define>USE_HAL_DRIVER, STM32F407xx, SYSTEM_ARCH_RTOS=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\psdk_lib\lib;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK_report;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\..\..\glink_ftp;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK</IncludePath>
+              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\..\..\glink_ftp;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\psdk_lib\lib_src;..\..\..\..\..\module_sample\utils;..\..\..\..\..\..\..\psdk_lib\cJSON</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1278,9 +1278,9 @@
           <GroupName>lib</GroupName>
           <Files>
             <File>
-              <FileName>mdk_app.lib</FileName>
+              <FileName>libpayload.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\..\..\psdk_lib\lib\mdk_app.lib</FilePath>
+              <FilePath>..\..\..\..\..\..\..\psdk_lib\lib\armcc_cortex-m4\libpayload.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1719,6 +1719,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\module_sample\flight_control\test_flight_control.c</FilePath>
             </File>
+            <File>
+              <FileName>test_playload_ppk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\ppk\test_playload_ppk.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cJSON</GroupName>
+          <Files>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\psdk_lib\cJSON\cJSON.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1731,8 +1746,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.1" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.0.1"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.1.2" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.4.0"/>
         <targetInfos>
           <targetInfo name="mdk_app"/>
         </targetInfos>

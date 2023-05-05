@@ -1,7 +1,12 @@
 #include "test_playload_ppk.h"
 #include "gdu_logger.h"
 #include "gdu_ppk.h"
-#include "time_sync.h"
+#include "gdu_time_sync.h"
+#include "uart.h"
+
+
+#define GDU_PPK_TEST_UART_NUM             UART_NUM_6
+#define GDU_PPK_TEST_UART_BAUD            460800 
 
 T_GduPPKHandlerList GduPPKHandlerList;
 static T_GduOsalHandler *osalHandler = NULL;
@@ -10,21 +15,23 @@ static void *GduTest_PPKTask(void *arg);
 
 T_GduReturnCode GduTest_PPKEventPinInit(void)
 {
+	USER_LOG_INFO("PPK event pin Init");
 	return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 T_GduReturnCode GduTest_PPKEventTrigger(E_GduPPKEventPinState pinState)
 {
-
+	USER_LOG_INFO("PPK event Trigger");
 	return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+
 
 T_GduReturnCode GduTest_PPKStartService(void)
 {
 	T_GduReturnCode returnCode = GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR; 
     osalHandler = GduPlatform_GetOsalHandler();
-
-    GduPPKHandlerList.EventPinInit = GduTest_PPKEventPinInit;
+	GduPPKHandlerList.SwitchType = PPK_TO_PSDK;
+	GduPPKHandlerList.EventPinInit = GduTest_PPKEventPinInit;
     GduPPKHandlerList.EventTrigger = GduTest_PPKEventTrigger;
 	returnCode = GduPPK_RegHandlerList(&GduPPKHandlerList);
 	if(GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS != returnCode) {
@@ -67,13 +74,25 @@ static void *GduTest_PPKTask(void *arg)
 	T_GduReturnCode returnCode = GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN; 
 
 	uint16_t timeCount = 0;
+	uint32_t rawDataCount = 0;
+
+	UART_Init(GDU_PPK_TEST_UART_NUM, GDU_PPK_TEST_UART_BAUD);
 
 	while (1) 
 	{
 		if(GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS == GduPPK_GetRawData(buf, &readReturnLength)) {
-			USER_LOG_INFO("read raw data length %d \n");
+			int ret = UART_Write(GDU_PPK_TEST_UART_NUM, buf,readReturnLength);//通过串口将数据打印出来,也可以将数数据存入其他介质中，由用户自定义
+			if(ret >= 0 ) {
+				if(ret != readReturnLength){
+					USER_LOG_INFO("Incomplete ppk data writing %d %d",readReturnLength,ret);
+				}
+			}
+			else{
+				USER_LOG_ERROR("ppk data write uart error");
+			}
 		}
 
+#if 0
 		if(0 == timeCount % 100)
 		{
 			int i = 0;
@@ -83,14 +102,19 @@ static void *GduTest_PPKTask(void *arg)
 					continue;
 				}
 				if(GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS == GduPPK_GetQianXunEventData(cameraLens_id,exposure_id, &aircraftTime,out_event_str)) {
-					USER_LOG_INFO("qianxun event: %s",out_event_str);	
+					//USER_LOG_INFO("qianxun event: %s",out_event_str);	
 				}
 			}
 		}
+#endif
 
-		timeCount ++; 
+		if (0 == timeCount % 100)
+		{
+			GduPPK_GetRawDataCount(&rawDataCount);
+			USER_LOG_INFO("ppk data countd: %d",rawDataCount);
+		}
+
+		timeCount++;
 		osalHandler->TaskSleepMs(10);
 	}
 }
-
-

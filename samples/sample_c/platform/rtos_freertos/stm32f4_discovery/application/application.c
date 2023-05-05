@@ -360,26 +360,26 @@ void GduUser_MonitorTask(void const *argument)
         // report UART buffer state
 #ifdef USING_UART_PORT_1
         UART_GetBufferState(UART_NUM_1, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart1 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart1 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+        USER_LOG_DEBUG("Uart1 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+         USER_LOG_DEBUG("Uart1 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
 
 #ifdef USING_UART_PORT_2
         UART_GetBufferState(UART_NUM_2, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart2 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart2 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+        USER_LOG_DEBUG("Uart2 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+         USER_LOG_DEBUG("Uart2 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
 
 #ifdef USING_UART_PORT_3
         UART_GetBufferState(UART_NUM_3, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart3 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart3 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+         USER_LOG_DEBUG("Uart3 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+         USER_LOG_DEBUG("Uart3 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
 
         // report system performance information.

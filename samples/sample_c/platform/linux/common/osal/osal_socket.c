@@ -128,6 +128,7 @@ T_GduReturnCode Osal_UdpSendData(T_GduSocketHandle socketHandle, const char *ipA
     if (ret >= 0) {
         *realLen = ret;
     } else {
+        printf("send err , err:%d\n", ret);
         return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
