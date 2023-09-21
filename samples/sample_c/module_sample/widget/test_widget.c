@@ -147,14 +147,12 @@ T_GduReturnCode GduTest_WidgetStartService(void)
         return gduStat;
     }
 #endif
-#if 1
     //Step 3 : Set widget handler list
     gduStat = GduWidget_RegHandlerList(s_widgetHandlerList, s_widgetHandlerListCount);
     if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Set widget handler list error, stat = 0x%08llX", gduStat);
         return gduStat;
     }
-    #endif
 
     //Step 4 : Run widget api sample task
     if (osalHandler->TaskCreate("user_widget_task", GduTest_WidgetTask, WIDGET_TASK_STACK_SIZE, NULL,

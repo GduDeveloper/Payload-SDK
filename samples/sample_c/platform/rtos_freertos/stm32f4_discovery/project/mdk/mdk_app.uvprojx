@@ -80,7 +80,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>C:\Keil_v5\ARM\ARMCC\Bin\fromelf.exe .\Objects\mdk_app.axf --bin --output .\gdu_sdk_demo_rtos.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
@@ -137,7 +137,7 @@
             <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -336,7 +336,7 @@
               <MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
               <Define>USE_HAL_DRIVER, STM32F407xx, SYSTEM_ARCH_RTOS=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\psdk_lib\lib;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK_report;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\..\..\glink_ftp;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\glink\glink_m\PSDK\PSDK</IncludePath>
+              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\..\..\glink_ftp;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\psdk_lib\lib_src;..\..\..\..\..\module_sample\utils;..\..\..\..\..\..\..\psdk_lib\cJSON;..\..\..\..\..\..\..\develop_project\code\psdk_lib\include;..\..\..\..\..\..\..\develop_project\code\glink_ftp;..\..\..\..\..\..\..\develop_project\code\glink;..\..\..\..\..\..\..\develop_project\code\cJSON;..\..\..\..\..\..\..\cJSON;..\..\..\..\..\..\..\psdk_lib\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1276,11 +1276,79 @@
         </Group>
         <Group>
           <GroupName>lib</GroupName>
+          <GroupOption>
+            <CommonProperty>
+              <UseCPPCompiler>0</UseCPPCompiler>
+              <RVCTCodeConst>0</RVCTCodeConst>
+              <RVCTZI>0</RVCTZI>
+              <RVCTOtherData>0</RVCTOtherData>
+              <ModuleSelection>0</ModuleSelection>
+              <IncludeInBuild>1</IncludeInBuild>
+              <AlwaysBuild>2</AlwaysBuild>
+              <GenerateAssemblyFile>2</GenerateAssemblyFile>
+              <AssembleAssemblyFile>2</AssembleAssemblyFile>
+              <PublicsOnly>2</PublicsOnly>
+              <StopOnExitCode>11</StopOnExitCode>
+              <CustomArgument></CustomArgument>
+              <IncludeLibraryModules></IncludeLibraryModules>
+              <ComprImg>1</ComprImg>
+            </CommonProperty>
+            <GroupArmAds>
+              <Cads>
+                <interw>2</interw>
+                <Optim>0</Optim>
+                <oTime>2</oTime>
+                <SplitLS>2</SplitLS>
+                <OneElfS>2</OneElfS>
+                <Strict>2</Strict>
+                <EnumInt>2</EnumInt>
+                <PlainCh>2</PlainCh>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <wLevel>0</wLevel>
+                <uThumb>2</uThumb>
+                <uSurpInc>2</uSurpInc>
+                <uC99>2</uC99>
+                <useXO>2</useXO>
+                <v6Lang>0</v6Lang>
+                <v6LangP>0</v6LangP>
+                <vShortEn>2</vShortEn>
+                <vShortWch>2</vShortWch>
+                <v6Lto>2</v6Lto>
+                <v6WtE>2</v6WtE>
+                <v6Rtti>2</v6Rtti>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define></Define>
+                  <Undefine></Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Cads>
+              <Aads>
+                <interw>2</interw>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <thumb>2</thumb>
+                <SplitLS>2</SplitLS>
+                <SwStkChk>2</SwStkChk>
+                <NoWarn>2</NoWarn>
+                <uSurpInc>2</uSurpInc>
+                <useXO>2</useXO>
+                <uClangAs>2</uClangAs>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define></Define>
+                  <Undefine></Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Aads>
+            </GroupArmAds>
+          </GroupOption>
           <Files>
             <File>
               <FileName>mdk_app.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\..\..\psdk_lib\lib\mdk_app.lib</FilePath>
+              <FilePath>..\..\..\..\..\..\..\psdk_lib\lib\armcc_cortex-m4\mdk_app.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1718,6 +1786,94 @@
               <FileName>test_flight_control.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\module_sample\flight_control\test_flight_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_playload_ppk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\ppk\test_playload_ppk.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_hms.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\hms\test_hms.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cJSON</GroupName>
+          <GroupOption>
+            <CommonProperty>
+              <UseCPPCompiler>0</UseCPPCompiler>
+              <RVCTCodeConst>0</RVCTCodeConst>
+              <RVCTZI>0</RVCTZI>
+              <RVCTOtherData>0</RVCTOtherData>
+              <ModuleSelection>0</ModuleSelection>
+              <IncludeInBuild>1</IncludeInBuild>
+              <AlwaysBuild>2</AlwaysBuild>
+              <GenerateAssemblyFile>2</GenerateAssemblyFile>
+              <AssembleAssemblyFile>2</AssembleAssemblyFile>
+              <PublicsOnly>2</PublicsOnly>
+              <StopOnExitCode>11</StopOnExitCode>
+              <CustomArgument></CustomArgument>
+              <IncludeLibraryModules></IncludeLibraryModules>
+              <ComprImg>1</ComprImg>
+            </CommonProperty>
+            <GroupArmAds>
+              <Cads>
+                <interw>2</interw>
+                <Optim>0</Optim>
+                <oTime>2</oTime>
+                <SplitLS>2</SplitLS>
+                <OneElfS>2</OneElfS>
+                <Strict>2</Strict>
+                <EnumInt>2</EnumInt>
+                <PlainCh>2</PlainCh>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <wLevel>0</wLevel>
+                <uThumb>2</uThumb>
+                <uSurpInc>2</uSurpInc>
+                <uC99>2</uC99>
+                <useXO>2</useXO>
+                <v6Lang>0</v6Lang>
+                <v6LangP>0</v6LangP>
+                <vShortEn>2</vShortEn>
+                <vShortWch>2</vShortWch>
+                <v6Lto>2</v6Lto>
+                <v6WtE>2</v6WtE>
+                <v6Rtti>2</v6Rtti>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define></Define>
+                  <Undefine></Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Cads>
+              <Aads>
+                <interw>2</interw>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <thumb>2</thumb>
+                <SplitLS>2</SplitLS>
+                <SwStkChk>2</SwStkChk>
+                <NoWarn>2</NoWarn>
+                <uSurpInc>2</uSurpInc>
+                <useXO>2</useXO>
+                <uClangAs>2</uClangAs>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define></Define>
+                  <Undefine></Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Aads>
+            </GroupArmAds>
+          </GroupOption>
+          <Files>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\cJSON\cJSON.c</FilePath>
             </File>
           </Files>
         </Group>

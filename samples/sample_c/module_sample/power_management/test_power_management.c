@@ -119,14 +119,21 @@ T_GduReturnCode GduTest_PowerManagementStartService(void)
 	{
 		USER_LOG_DEBUG("apply high power success");
 	}
-	
+
+    // register power off notification callback function
+    returnCode = GduPowerManagement_RegPowerOffNotificationCallback(GduTest_PowerOffNotificationCallback);
+    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("register power off notification callback function error");
+        return returnCode;
+    }
+
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 /* Private functions definition-----------------------------------------------*/
 static T_GduReturnCode GduTest_PowerOffNotificationCallback(bool *powerOffPreparationFlag)
 {
-    USER_LOG_INFO("aircraft will power off soon.");
+    USER_LOG_INFO("----------------------------------------aircraft will power off soon.");
 
     *powerOffPreparationFlag = true;
 

@@ -88,16 +88,18 @@ typedef enum {
 
 typedef enum {
     GDU_AIRCRAFT_SERIES_UNKNOWN = 0,
-    GDU_AIRCRAFT_SERIES_M200_V2 = 1,
-    GDU_AIRCRAFT_SERIES_M300 = 2,
+    GDU_AIRCRAFT_SERIES_S200_V1 = 1,
+    GDU_AIRCRAFT_SERIES_S400 = 2,
 } E_GduAircraftSeries;
 
 typedef enum {
     GDU_AIRCRAFT_TYPE_UNKNOWN = 0, /*!< Aircraft type is unknown. */
-    GDU_AIRCRAFT_TYPE_M200_V2 = 44, /*!< Aircraft type is Matrice 200 V2. */
-    GDU_AIRCRAFT_TYPE_M210_V2 = 45, /*!< Aircraft type is Matrice 220 V2. */
-    GDU_AIRCRAFT_TYPE_M210RTK_V2 = 46, /*!< Aircraft type is Matrice 210 RTK V2. */
-    GDU_AIRCRAFT_TYPE_M300_RTK = 60, /*!< Aircraft type is Matrice 300 RTK. */
+	GDU_AIRCRAFT_TYPE_S100 = 1, 
+    GDU_AIRCRAFT_TYPE_W300 = 2, 
+    GDU_AIRCRAFT_TYPE_600 = 3,
+    GDU_AIRCRAFT_TYPE_S400 = 4, 
+    GDU_AIRCRAFT_TYPE_S700 = 5,
+	GDU_AIRCRAFT_TYPE_S200 = 6,
 } E_GduAircraftType;
 
 /**
@@ -105,14 +107,7 @@ typedef enum {
  */
 typedef enum {
     GDU_CAMERA_TYPE_UNKNOWN = 0, /*!< Camera type is unknown. */
-    GDU_CAMERA_TYPE_Z30 = 20, /*!< Camera type is Z30. */
-    GDU_CAMERA_TYPE_XT2 = 26, /*!< Camera type is XT2. */
     GDU_CAMERA_TYPE_PSDK = 31, /*!< Camera type is third party camera based on Payload SDK. */
-    GDU_CAMERA_TYPE_XTS = 41, /*!< Camera type is XT S. */
-    GDU_CAMERA_TYPE_H20 = 42, /*!< Camera type is H20. */
-    GDU_CAMERA_TYPE_H20T = 43, /*!< Camera type is H20T. */
-    GDU_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
-    GDU_CAMERA_TYPE_L1, /*!< Camera type is L1. */
 } E_GduCameraType;
 
 /**

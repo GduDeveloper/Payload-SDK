@@ -1,0 +1,14 @@
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/install/local.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/install.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/list_install_components.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/rebuild_cache.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/edit_cache.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/install/strip.dir
+/home/gcc/git/payload_SDK_release/build/CMakeFiles/entry.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/install/local.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/install.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/list_install_components.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/rebuild_cache.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/edit_cache.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/install/strip.dir
+/home/gcc/git/payload_SDK_release/build/samples/sample_c/platform/linux/manifold2/CMakeFiles/gdu_sdk_demo_linux.dir

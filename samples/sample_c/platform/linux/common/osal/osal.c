@@ -58,10 +58,10 @@ T_GduReturnCode Osal_TaskCreate(const char *name, void *(*taskFunc)(void *), uin
 
     if (name != NULL)
         strncpy(nameDealed, name, sizeof(nameDealed) - 1);
-    result = pthread_setname_np(*(pthread_t *) *task, nameDealed);
-    if (result != 0) {
-        return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
-    }
+    //result = pthread_setname_np(*(pthread_t *) *task, nameDealed);
+    //if (result != 0) {
+    //    return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+    //}
 
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);

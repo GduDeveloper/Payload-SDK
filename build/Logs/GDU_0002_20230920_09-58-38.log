@@ -1,0 +1,148 @@
+[0.000][core]-[debug]-[GduCore_Init:72) LIB VERSION: 0.0.24
+[1.824][core]-[info]-[GduCore_Init_FunList:181) reg fun list init ok
+[1.825][core]-[info]-[GduCore_Reg_FunList:189) reg fun 
+[1.825][core]-[info]-[GduCore_Reg_FunList:196) reg fun ****************
+[1.825][core]-[info]-[GduCore_Reg_FunList:208) reg fun ok 
+[1.825][camera]-[info]-[GduPayloadCamera_RegCommonHandler:280) camera common handler reg ok
+[1.825][user]-[debug]-[GduTest_CameraEmuBaseStartService:1377) Get video stream remote address: , port: 0
+[1.825][core]-[info]-[GduCore_Reg_FunList:189) reg fun 
+[1.825][core]-[info]-[GduCore_Reg_FunList:196) reg fun ****************
+[1.826][core]-[info]-[GduCore_Reg_FunList:208) reg fun ok 
+[1.826][core]-[info]-[GduCore_Reg_FunList:189) reg fun 
+[1.826][core]-[info]-[GduCore_Reg_FunList:196) reg fun ****************
+[1.826][core]-[info]-[GduCore_Reg_FunList:208) reg fun ok 
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1073) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1074) file name widget_config.json
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1075) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/widget_config.json
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1085) json file crc 43
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_button1.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_button1.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 1A40
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_list_item1.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_list_item1.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 38C4
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_switch_unselect.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_switch_unselect.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 9BC7
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_scale.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_scale.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 63F0
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_switch_select.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_switch_select.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 7A5
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_button2.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_button2.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 11C4
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_list_item2.png
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/en_big_screen/icon_list_item2.png
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc C28B
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1073) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1074) file name widget_config.json
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1075) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/widget_config.json
+[1.826][user]-[info]-[GduWidget_GetFlieList_and_check:1085) json file crc C98E
+[1.826][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_button1.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_button1.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 1A40
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_list_item1.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_list_item1.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 38C4
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_switch_unselect.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_switch_unselect.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 9BC7
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_scale.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_scale.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 63F0
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_switch_select.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_switch_select.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 7A5
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_button2.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_button2.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc 11C4
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1101) path /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1102) file name icon_list_item2.png
+[1.827][user]-[warn]-[GduWidget_GetFlieList_and_check:1103) toatal /home/gcc/git/payload_SDK_release/samples/sample_c/module_sample/widget/widget_file/cn_big_screen/icon_list_item2.png
+[1.827][user]-[info]-[GduWidget_GetFlieList_and_check:1112) ioc file crc C28B
+[1.828][core]-[info]-[GduCore_Reg_FunList:189) reg fun 
+[1.828][core]-[info]-[GduCore_Reg_FunList:196) reg fun ****************
+[1.828][core]-[info]-[GduCore_Reg_FunList:208) reg fun ok 
+[1.828][user]-[info]-[SetVolume:601) Set widget speaker volume: 30
+[1.828][user]-[warn]-[SetVolume:619) No audio device found, please add audio device and init speaker volume here!!!
+[1.828][core]-[info]-[GduCore_Reg_FunList:189) reg fun 
+[1.828][core]-[info]-[GduCore_Reg_FunList:196) reg fun ****************
+[1.828][core]-[info]-[GduCore_Reg_FunList:208) reg fun ok 
+[1.828][link]-[info]-[npc_heartbeatServer:467) npc connect
+[2.828][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[3.357][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[3.357][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[3.829][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[4.829][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[4.886][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[4.886][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[5.829][link]-[info]-[npc_heartbeatServer:467) npc connect
+[5.830][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[6.446][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[6.446][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[6.830][link]-[info]-[npc_heartbeatServer:467) npc connect
+[6.830][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[7.831][link]-[info]-[npc_heartbeatServer:467) npc connect
+[7.831][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[7.943][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[7.943][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[8.831][link]-[info]-[npc_heartbeatServer:467) npc connect
+[8.831][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[9.466][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[9.466][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[9.831][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[9.832][link]-[info]-[npc_heartbeatServer:467) npc connect
+[10.832][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[10.832][link]-[info]-[npc_heartbeatServer:467) npc connect
+[11.018][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[11.018][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[11.833][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[11.833][link]-[info]-[npc_heartbeatServer:467) npc connect
+[12.521][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[12.521][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[12.833][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[12.833][link]-[info]-[npc_heartbeatServer:467) npc connect
+[13.833][user]-[debug]-[baseMessage_requestAdaptorSN:82) request adaptor SN
+[13.833][link]-[info]-[npc_heartbeatServer:467) npc connect
+[13.846][user]-[debug]-[baseMsg_adapterRingSn_ack:189) get adaptorSn: 000000
+[13.990][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[13.990][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[14.833][user]-[debug]-[baseMessage_requestComID:63) request component id
+[14.858][user]-[debug]-[baseMsg_assignComId_ack:168) get component id : 1
+[15.423][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[15.423][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[16.872][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[16.873][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[18.269][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[18.269][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[19.702][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[19.702][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[21.124][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[21.124][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[22.528][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[22.528][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[23.935][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[23.935][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[25.330][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[25.330][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[26.729][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[26.729][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[28.136][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[28.136][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.
+[29.571][user]-[debug]-[UserGimbal_Task:397) gimbal attitude: pitch 0, roll 0, yaw 0.
+[29.571][user]-[debug]-[UserGimbal_Task:400) gimbal fine tune: pitch 0, roll 0, yaw 0.

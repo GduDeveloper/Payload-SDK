@@ -82,6 +82,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../psdk_lib/lib)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink/glink_m)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink/glink_np)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink_ftp)
 
 file(GLOB_RECURSE LIB_SRC ../../../../../../../psdk_lib/lib/*.c)
 #message(STATUS "src2 *****************${LIB_SRC}")

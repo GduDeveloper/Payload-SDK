@@ -37,9 +37,7 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 #define GDU_VERSION_MAJOR     3 /*!< GDU SDK major version num, when have incompatible API changes. Range from 0 to 99. */
 #define GDU_VERSION_MINOR     0 /*!< GDU SDK minor version num, when add functionality in a backwards compatible manner changes. Range from 0 to 99. */
-#define GDU_VERSION_MODIFY    0 /*!< GDU SDK modify version num, when have backwards compatible bug fixes changes. Range from 0 to 99. */
-#define GDU_VERSION_BETA      0 /*!< GDU SDK version beta info, release version will be 0, when beta version release changes. Range from 0 to 255. */
-#define GDU_VERSION_BUILD     9 /*!< GDU SDK version build info, when jenkins trigger build changes. Range from 0 to 65535. */
+#define GDU_VERSION_BUILD     19 /*!< GDU SDK version*/
 
 /* Exported types ------------------------------------------------------------*/
 

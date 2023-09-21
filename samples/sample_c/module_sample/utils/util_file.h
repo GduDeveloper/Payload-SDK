@@ -54,7 +54,7 @@ T_GduReturnCode UtilFile_GetCreateTime(const char *filePath, T_UtilFileCreateTim
 T_GduReturnCode UtilFile_GetFileSizeByPath(const char *filePath, uint32_t *fileSize);
 T_GduReturnCode UtilFile_GetFileDataByPath(const char *filePath, uint32_t offset, uint16_t len,
                                            uint8_t *data, uint16_t *realLen);
-T_GduReturnCode GduFile_Delete(const char *filePath);
+T_GduReturnCode UtilFile_Delete(const char *filePath);
 
 T_GduReturnCode UtilFile_GetFileSize(FILE *file, uint32_t *fileSize);
 T_GduReturnCode UtilFile_GetFileData(FILE *file, uint32_t offset, uint16_t len, uint8_t *data, uint16_t *realLen);
