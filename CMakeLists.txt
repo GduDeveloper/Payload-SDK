@@ -31,15 +31,8 @@ if (USE_SYSTEM_ARCH MATCHES LINUX)
 
     message("-- Attention: If you want to use opencv C++ sample, please uncomment the next line.")
 #   add_subdirectory(samples/sample_c++/platform/linux/manifold2)
-    
-    execute_process(COMMAND uname -m OUTPUT_VARIABLE DEVICE_SYSTEM_ID)
-    if (DEVICE_SYSTEM_ID MATCHES x86_64)
-        set(LIBRARY_PATH psdk_lib/lib/x86_64-linux-gnu-gcc)
-    elseif (DEVICE_SYSTEM_ID MATCHES aarch64)
-        set(LIBRARY_PATH psdk_lib/lib/aarch64-linux-gnu-gcc)
-    else ()
-        message(FATAL_ERROR "FATAL: Please confirm your platform.")
-    endif ()
+
+    set(LIBRARY_PATH psdk_lib/lib/x86_64-linux-gnu-gcc)
 
     install(FILES ${LIBRARY_PATH}/libpayloadsdk.a
             DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"

@@ -23,8 +23,6 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#ifdef SYSTEM_ARCH_LINUX
-
 #include "test_widget_speaker.h"
 #include "gdu_logger.h"
 #include <stdlib.h>
@@ -33,6 +31,7 @@
 #include <stdio.h>
 #include "utils/util_misc.h"
 #include "utils/util_md5.h"
+#include <gdu_aircraft_info.h>
 
 #ifdef OPUS_INSTALLED
 
@@ -49,16 +48,20 @@
 #define WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME     "test_audio.opus"
 #define WIDGET_SPEAKER_AUDIO_PCM_FILE_NAME      "test_audio.pcm"
 
+#define WIDGET_SPEAKER_AUDIO_MP3_FILE_NAME     "test_audio.mp3"
+
 #define WIDGET_SPEAKER_TTS_FILE_NAME            "test_tts.txt"
 #define WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME     "tts_audio.wav"
 #define WIDGET_SPEAKER_TTS_FILE_MAX_SIZE        (3000)
 
 /* The frame size is hardcoded for this sample code but it doesn't have to be */
-#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_PACKET_SIZE    (3 * 1276)
-#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE     (6 * 960)
-#define WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE        (16000)
-#define WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS           (1)
-#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE  (160)
+#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_PACKET_SIZE          (3 * 1276)
+#define WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE           (6 * 960)
+#define WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE              (16000)
+#define WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS                 (1)
+
+#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE_8KBPS  (40)
+#define WIDGET_SPEAKER_AUDIO_OPUS_DECODE_BITRATE_8KBPS     (8000)
 
 /* The speaker initialization parameters */
 #define WIDGET_SPEAKER_DEFAULT_VOLUME                (30)
@@ -72,9 +75,19 @@ static T_GduMutexHandle s_speakerMutex = {0};
 static T_GduWidgetSpeakerState s_speakerState = {0};
 static T_GduTaskHandle s_widgetSpeakerTestThread;
 
+typedef enum 
+{
+	OPUS = 0,
+	MP3 = 1,
+}E_AudioType;
+
 static FILE *s_audioFile = NULL;
 static FILE *s_ttsFile = NULL;
 static bool s_isDecodeFinished = true;
+
+static E_AudioType s_isAudioType = OPUS;
+
+static uint16_t s_decodeBitrate = 0;
 
 /* Private functions declaration ---------------------------------------------*/
 static void SetSpeakerState(E_GduWidgetSpeakerState speakerState);
@@ -88,13 +101,21 @@ static T_GduReturnCode ReceiveTtsData(E_GduWidgetTransmitDataEvent event,
                                       uint32_t offset, uint8_t *buf, uint16_t size);
 static T_GduReturnCode ReceiveAudioData(E_GduWidgetTransmitDataEvent event,
                                         uint32_t offset, uint8_t *buf, uint16_t size);
+
+static T_GduReturnCode ReceiveMp3AudioData(E_GduWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size);
+#ifdef SYSTEM_ARCH_LINUX
 static void *GduTest_WidgetSpeakerTask(void *arg);
 static uint32_t GduTest_GetVoicePlayProcessId(void);
 static uint32_t GduTest_KillVoicePlayProcess(uint32_t pid);
 static T_GduReturnCode GduTest_DecodeAudioData(void);
 static T_GduReturnCode GduTest_PlayAudioData(void);
+
+static T_GduReturnCode GduTest_PlayMp3AudioData(void);
+
 static T_GduReturnCode GduTest_PlayTtsData(void);
 static T_GduReturnCode GduTest_CheckFileMd5Sum(const char *path, uint8_t *buf, uint16_t size);
+#endif
 
 /* Exported functions definition ---------------------------------------------*/
 T_GduReturnCode GduTest_WidgetSpeakerStartService(void)
@@ -110,6 +131,8 @@ T_GduReturnCode GduTest_WidgetSpeakerStartService(void)
     s_speakerHandler.SetVolume = SetVolume;
     s_speakerHandler.ReceiveTtsData = ReceiveTtsData;
     s_speakerHandler.ReceiveVoiceData = ReceiveAudioData;
+
+    s_speakerHandler.ReceiveMp3VoiceData = ReceiveMp3AudioData;
 
     returnCode = osalHandler->MutexCreate(&s_speakerMutex);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -131,6 +154,7 @@ T_GduReturnCode GduTest_WidgetSpeakerStartService(void)
 
     s_speakerState.state = GDU_WIDGET_SPEAKER_STATE_IDEL;
     s_speakerState.workMode = GDU_WIDGET_SPEAKER_WORK_MODE_VOICE;
+    //s_speakerState.workMode = GDU_WIDGET_SPEAKER_WORK_MODE_TTS;
     s_speakerState.playMode = GDU_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY;
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
@@ -145,17 +169,20 @@ T_GduReturnCode GduTest_WidgetSpeakerStartService(void)
         return returnCode;
     }
 
+#ifdef SYSTEM_ARCH_LINUX
     if (osalHandler->TaskCreate("user_widget_speaker_task", GduTest_WidgetSpeakerTask, WIDGET_SPEAKER_TASK_STACK_SIZE,
                                 NULL,
                                 &s_widgetSpeakerTestThread) != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Gdu widget speaker test task create error.");
         return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
+#endif
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 /* Private functions definition-----------------------------------------------*/
+#ifdef SYSTEM_ARCH_LINUX
 static uint32_t GduTest_GetVoicePlayProcessId(void)
 {
     FILE *fp;
@@ -213,24 +240,22 @@ static T_GduReturnCode GduTest_DecodeAudioData(void)
     /*! Attention: you can use "ffmpeg -i xxx.mp3 -ar 16000 -ac 1 out.wav" and use opus-tools to generate opus file for test */
     fin = fopen(WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME, "r");
     if (fin == NULL) {
-        fprintf(stderr, "failed to open input file: %s\n", strerror(errno));
-        return EXIT_FAILURE;
-    }
-
-    /* Create a new decoder state. */
-    decoder = opus_decoder_create(WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE, WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS, &err);
-    if (err < 0) {
-        fprintf(stderr, "failed to create decoder: %s\n", opus_strerror(err));
+        USER_LOG_ERROR("failed to open input file: %s\n", strerror(errno));
         return EXIT_FAILURE;
     }
 
     fout = fopen(WIDGET_SPEAKER_AUDIO_PCM_FILE_NAME, "w");
     if (fout == NULL) {
-        fprintf(stderr, "failed to open output file: %s\n", strerror(errno));
-        return EXIT_FAILURE;
+        USER_LOG_ERROR("failed to open output file: %s\n", strerror(errno));
+        goto open_pcm_audio_failed;
     }
 
-    USER_LOG_INFO("Decode Start...");
+    /* Create a new decoder state. */
+    decoder = opus_decoder_create(WIDGET_SPEAKER_AUDIO_OPUS_SAMPLE_RATE, WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS, &err);
+    if (err < 0) {
+        USER_LOG_ERROR("failed to create decoder: %s\n", opus_strerror(err));
+        goto create_decoder_failed;
+    }
 
     while (1) {
         int i;
@@ -238,7 +263,8 @@ static T_GduReturnCode GduTest_DecodeAudioData(void)
         int frame_size;
 
         /* Read a 16 bits/sample audio frame. */
-        nbBytes = fread(cbits, 1, WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE, fin);
+        nbBytes = fread(cbits, 1, s_decodeBitrate / WIDGET_SPEAKER_AUDIO_OPUS_DECODE_BITRATE_8KBPS *
+                                  WIDGET_SPEAKER_AUDIO_OPUS_DECODE_FRAME_SIZE_8KBPS, fin);
         if (feof(fin))
             break;
 
@@ -248,8 +274,8 @@ static T_GduReturnCode GduTest_DecodeAudioData(void)
            the frame size returned. */
         frame_size = opus_decode(decoder, cbits, nbBytes, out, WIDGET_SPEAKER_AUDIO_OPUS_MAX_FRAME_SIZE, 0);
         if (frame_size < 0) {
-            fprintf(stderr, "decoder failed: %s\n", opus_strerror(frame_size));
-            return EXIT_FAILURE;
+            USER_LOG_ERROR("decoder failed: %s\n", opus_strerror(frame_size));
+            goto decode_data_failed;
         }
 
         USER_LOG_DEBUG("decode data to file: %d\r\n", frame_size * WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS);
@@ -262,16 +288,18 @@ static T_GduReturnCode GduTest_DecodeAudioData(void)
         fwrite(pcm_bytes, sizeof(short), frame_size * WIDGET_SPEAKER_AUDIO_OPUS_CHANNELS, fout);
     }
 
-    /*Destroy the encoder state*/
-    opus_decoder_destroy(decoder);
-    fclose(fin);
-    fclose(fout);
-
     USER_LOG_INFO("Decode Finished...");
     s_isDecodeFinished = true;
 
+decode_data_failed:
+    opus_decoder_destroy(decoder);
+create_decoder_failed:
+    fclose(fout);
+open_pcm_audio_failed:
+    fclose(fin);
 #endif
-    return EXIT_SUCCESS;
+
+    return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
 static T_GduReturnCode GduTest_PlayAudioData(void)
@@ -287,51 +315,83 @@ static T_GduReturnCode GduTest_PlayAudioData(void)
     return GduUserUtil_RunSystemCmd(cmdStr);
 }
 
+
+static T_GduReturnCode GduTest_PlayMp3AudioData(void)
+{
+    char cmdStr[128];
+
+    memset(cmdStr, 0, sizeof(cmdStr));
+    USER_LOG_INFO("Start Playing...");
+
+    //snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",WIDGET_SPEAKER_AUDIO_MP3_FILE_NAME);
+    snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 %s 2>/dev/null",WIDGET_SPEAKER_AUDIO_MP3_FILE_NAME);
+
+	printf("cmdStr: %s\n",cmdStr);
+
+    return GduUserUtil_RunSystemCmd(cmdStr);
+}
+
+
 static T_GduReturnCode GduTest_PlayTtsData(void)
 {
     FILE *txtFile;
     uint8_t data[WIDGET_SPEAKER_TTS_FILE_MAX_SIZE] = {0};
     int32_t readLen;
     char cmdStr[WIDGET_SPEAKER_TTS_FILE_MAX_SIZE + 128];
+    T_GduAircraftInfoBaseInfo aircraftInfoBaseInfo;
+    T_GduReturnCode returnCode;
 
-    txtFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "r");
-    if (txtFile == NULL) {
-        fprintf(stderr, "failed to open input file: %s\n", strerror(errno));
-        return EXIT_FAILURE;
+    returnCode = GduAircraftInfo_GetBaseInfo(&aircraftInfoBaseInfo);
+    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("get aircraft base info error");
+        return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
     }
 
-    readLen = fread(data, 1, WIDGET_SPEAKER_TTS_FILE_MAX_SIZE, txtFile);
-    if (readLen <= 0) {
-        USER_LOG_ERROR("Read tts file failed, error code: %d", readLen);
+    if (aircraftInfoBaseInfo.aircraftType == GDU_AIRCRAFT_TYPE_S400) {
+        return GduTest_PlayAudioData();
+    } else {
+        txtFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "r");
+        if (txtFile == NULL) {
+            USER_LOG_ERROR("failed to open input file: %s\n", strerror(errno));
+            return EXIT_FAILURE;
+        }
+
+        readLen = fread(data, 1, WIDGET_SPEAKER_TTS_FILE_MAX_SIZE - 1, txtFile);
+        if (readLen <= 0) {
+            USER_LOG_ERROR("Read tts file failed, error code: %d", readLen);
+            fclose(txtFile);
+            return GDU_ERROR_SYSTEM_MODULE_CODE_NOT_FOUND;
+        }
+
+        data[readLen] = '\0';
+
         fclose(txtFile);
-        return GDU_ERROR_SYSTEM_MODULE_CODE_NOT_FOUND;
-    }
 
-    fclose(txtFile);
+        USER_LOG_INFO("Read tts file success, len: %d", readLen);
+        USER_LOG_INFO("Content: %s", data);
 
-    USER_LOG_INFO("Read tts file success, len: %d", readLen);
-    USER_LOG_INFO("Content: %s", data);
+        memset(cmdStr, 0, sizeof(cmdStr));
 
-    memset(cmdStr, 0, sizeof(cmdStr));
-
-    SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION);
+        SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION);
 
 #if EKHO_INSTALLED
-    /*! Attention: you can use other tts opensource function to convert txt to speech, example used ekho v7.5 */
-    snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100 -o %s", data, WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
+        /*! Attention: you can use other tts opensource function to convert txt to speech, example used ekho v7.5 */
+        snprintf(cmdStr, sizeof(cmdStr), " ekho %s -s 20 -p 20 -a 100 -o %s", data,
+                 WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 #else
-    USER_LOG_WARN(
+        USER_LOG_WARN(
         "Ekho is not installed, please visit https://www.eguidedog.net/ekho.php to install it or use other TTS tools to convert audio");
 #endif
-    GduUserUtil_RunSystemCmd(cmdStr);
+        GduUserUtil_RunSystemCmd(cmdStr);
 
-    SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_PLAYING);
-    USER_LOG_INFO("Start TTS Playing...");
-    memset(cmdStr, 0, sizeof(cmdStr));
-    snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
-             WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
+        SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_PLAYING);
+        USER_LOG_INFO("Start TTS Playing...");
+        memset(cmdStr, 0, sizeof(cmdStr));
+        snprintf(cmdStr, sizeof(cmdStr), "ffplay -nodisp -autoexit -ar 16000 -ac 1 -f s16le -i %s 2>/dev/null",
+                 WIDGET_SPEAKER_TTS_OUTPUT_FILE_NAME);
 
-    return GduUserUtil_RunSystemCmd(cmdStr);
+        return GduUserUtil_RunSystemCmd(cmdStr);
+    }
 }
 
 static T_GduReturnCode GduTest_CheckFileMd5Sum(const char *path, uint8_t *buf, uint16_t size)
@@ -341,7 +401,7 @@ static T_GduReturnCode GduTest_CheckFileMd5Sum(const char *path, uint8_t *buf, u
     uint16_t readLen;
     T_GduReturnCode returnCode;
     uint8_t readBuf[1024];
-    uint8_t md5Sum[16];
+    uint8_t md5Sum[16] = {0};
     FILE *file = NULL;;
 
     UtilMd5_Init(&md5Ctx);
@@ -383,6 +443,7 @@ static T_GduReturnCode GduTest_CheckFileMd5Sum(const char *path, uint8_t *buf, u
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
+#endif
 
 static void SetSpeakerState(E_GduWidgetSpeakerState speakerState)
 {
@@ -475,10 +536,12 @@ static T_GduReturnCode StartPlay(void)
     uint32_t pid;
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
 
+#ifdef SYSTEM_ARCH_LINUX
     pid = GduTest_GetVoicePlayProcessId();
     if (pid != 0) {
         GduTest_KillVoicePlayProcess(pid);
     }
+#endif
 
     osalHandler->TaskSleepMs(5);
     USER_LOG_INFO("Start widget speaker play");
@@ -502,10 +565,12 @@ static T_GduReturnCode StopPlay(void)
     USER_LOG_INFO("Stop widget speaker play");
     s_speakerState.state = GDU_WIDGET_SPEAKER_STATE_IDEL;
 
+#ifdef SYSTEM_ARCH_LINUX
     pid = GduTest_GetVoicePlayProcessId();
     if (pid != 0) {
         GduTest_KillVoicePlayProcess(pid);
     }
+#endif
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -533,18 +598,25 @@ static T_GduReturnCode SetVolume(uint8_t volume)
     realVolume = 1.5f * (float) volume;
     s_speakerState.volume = volume;
 
-#ifdef PLATFORM_ARCH_x86_64
     USER_LOG_INFO("Set widget speaker volume: %d", volume);
-    memset(cmdStr, 0, sizeof(cmdStr));
-    snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
-             (int32_t) realVolume);
 
-    returnCode = GduUserUtil_RunSystemCmd(cmdStr);
-    if (returnCode < 0) {
-        USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
+#ifdef PLATFORM_ARCH_x86_64
+    snprintf(cmdStr, sizeof(cmdStr), "pactl list | grep %s -q", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME);
+    ret = system(cmdStr);
+    if (ret == GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        memset(cmdStr, 0, sizeof(cmdStr));
+        snprintf(cmdStr, sizeof(cmdStr), "pactl set-sink-volume %s %d%%", WIDGET_SPEAKER_USB_AUDIO_DEVICE_NAME,
+                 (int32_t) realVolume);
+
+        returnCode = GduUserUtil_RunSystemCmd(cmdStr);
+        if (returnCode < 0) {
+            USER_LOG_ERROR("Set widget speaker volume error: %d", ret);
+        }
+    } else {
+        USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here.");
     }
 #else
-    USER_LOG_WARN("Add set speaker volume function here!");
+    USER_LOG_WARN("No audio device found, please add audio device and init speaker volume here!!!");
 #endif
 
     returnCode = osalHandler->MutexUnlock(s_speakerMutex);
@@ -564,15 +636,18 @@ static T_GduReturnCode ReceiveTtsData(E_GduWidgetTransmitDataEvent event,
 
     if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_START) {
         USER_LOG_INFO("Create tts file.");
+#ifdef SYSTEM_ARCH_LINUX
         s_ttsFile = fopen(WIDGET_SPEAKER_TTS_FILE_NAME, "wb");
         if (s_ttsFile == NULL) {
             USER_LOG_ERROR("Open tts file error.");
         }
+#endif
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
         }
     } else if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT) {
         USER_LOG_INFO("Transmit tts file, offset: %d, size: %d", offset, size);
+#ifdef SYSTEM_ARCH_LINUX
         if (s_ttsFile != NULL) {
             fseek(s_ttsFile, offset, SEEK_SET);
             writeLen = fwrite(buf, 1, size, s_ttsFile);
@@ -580,11 +655,13 @@ static T_GduReturnCode ReceiveTtsData(E_GduWidgetTransmitDataEvent event,
                 USER_LOG_ERROR("Write tts file error %d", writeLen);
             }
         }
+#endif
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
         }
     } else if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_FINISH) {
         USER_LOG_INFO("Close tts file.");
+#ifdef SYSTEM_ARCH_LINUX
         if (s_ttsFile != NULL) {
             fclose(s_ttsFile);
         }
@@ -593,6 +670,7 @@ static T_GduReturnCode ReceiveTtsData(E_GduWidgetTransmitDataEvent event,
         if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("File md5 sum check failed");
         }
+#endif
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_IDEL);
         }
@@ -606,9 +684,11 @@ static T_GduReturnCode ReceiveAudioData(E_GduWidgetTransmitDataEvent event,
 {
     uint16_t writeLen;
     T_GduReturnCode returnCode;
+    T_GduWidgetTransDataContent transDataContent = {0};
 
     if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_START) {
         s_isDecodeFinished = false;
+#ifdef SYSTEM_ARCH_LINUX
         USER_LOG_INFO("Create voice file.");
         s_audioFile = fopen(WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME, "wb");
         if (s_audioFile == NULL) {
@@ -617,8 +697,15 @@ static T_GduReturnCode ReceiveAudioData(E_GduWidgetTransmitDataEvent event,
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
         }
+#endif
+
+        memcpy(&transDataContent, buf, size);
+        s_decodeBitrate = transDataContent.transDataStartContent.fileDecodeBitrate;
+        USER_LOG_INFO("Create voice file: %s, decoder bitrate: %d.", transDataContent.transDataStartContent.fileName,
+                      transDataContent.transDataStartContent.fileDecodeBitrate);
     } else if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT) {
         USER_LOG_INFO("Transmit voice file, offset: %d, size: %d", offset, size);
+#ifdef SYSTEM_ARCH_LINUX
         if (s_audioFile != NULL) {
             fseek(s_audioFile, offset, SEEK_SET);
             writeLen = fwrite(buf, 1, size, s_audioFile);
@@ -626,6 +713,7 @@ static T_GduReturnCode ReceiveAudioData(E_GduWidgetTransmitDataEvent event,
                 USER_LOG_ERROR("Write tts file error %d", writeLen);
             }
         }
+#endif
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
         }
@@ -635,21 +723,96 @@ static T_GduReturnCode ReceiveAudioData(E_GduWidgetTransmitDataEvent event,
             fclose(s_audioFile);
         }
 
+#ifdef SYSTEM_ARCH_LINUX
         returnCode = GduTest_CheckFileMd5Sum(WIDGET_SPEAKER_AUDIO_OPUS_FILE_NAME, buf, size);
         if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("File md5 sum check failed");
             return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
         }
-
+#endif
         if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_IDEL);
         }
+#ifdef SYSTEM_ARCH_LINUX
         GduTest_DecodeAudioData();
+#endif
     }
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
+
+
+static T_GduReturnCode ReceiveMp3AudioData(E_GduWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size)
+{
+    uint16_t writeLen;
+    T_GduReturnCode returnCode;
+    T_GduWidgetTransDataContent transDataContent = {0};
+
+    if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_START) {
+		s_isAudioType = MP3;
+        //s_isDecodeFinished = false;
+#ifdef SYSTEM_ARCH_LINUX
+        USER_LOG_INFO("Create voice file.");
+        s_audioFile = fopen(WIDGET_SPEAKER_AUDIO_MP3_FILE_NAME, "wb");
+        if (s_audioFile == NULL) {
+            USER_LOG_ERROR("Create tts file error.");
+        }
+        if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
+            SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
+        }
+#endif
+
+        memcpy(&transDataContent, buf, size);
+        s_decodeBitrate = transDataContent.transDataStartContent.fileDecodeBitrate;
+        USER_LOG_INFO("Create mp3 voice file: %s, decoder bitrate: %d.", transDataContent.transDataStartContent.fileName,
+                      transDataContent.transDataStartContent.fileDecodeBitrate);
+    } else if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT) {
+        USER_LOG_INFO("Transmit voice file, offset: %d, size: %d", offset, size);
+#ifdef SYSTEM_ARCH_LINUX
+        if (s_audioFile != NULL) {
+            fseek(s_audioFile, offset, SEEK_SET);
+            writeLen = fwrite(buf, 1, size, s_audioFile);
+            if (writeLen != size) {
+                USER_LOG_ERROR("Write tts file error %d", writeLen);
+            }
+        }
+#endif
+        if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
+            SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_TRANSMITTING);
+        }
+    } else if (event == GDU_WIDGET_TRANSMIT_DATA_EVENT_FINISH) {
+        USER_LOG_INFO("Close voice file.");
+        if (s_audioFile != NULL) {
+            fclose(s_audioFile);
+        }
+
+#ifdef SYSTEM_ARCH_LINUX
+
+#if 1
+        returnCode = GduTest_CheckFileMd5Sum(WIDGET_SPEAKER_AUDIO_MP3_FILE_NAME, buf, size);
+        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+            USER_LOG_ERROR("File md5 sum check failed");
+            return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
+        }
+#endif
+
+#endif
+        if (s_speakerState.state != GDU_WIDGET_SPEAKER_STATE_PLAYING) {
+            SetSpeakerState(GDU_WIDGET_SPEAKER_STATE_IDEL);
+        }
+
+#ifdef SYSTEM_ARCH_LINUX
+        //GduTest_DecodeAudioData();
+#endif
+    }
+
+    return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+
+#ifdef SYSTEM_ARCH_LINUX
 #ifndef __CC_ARM
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
@@ -669,14 +832,24 @@ static void *GduTest_WidgetSpeakerTask(void *arg)
         if (s_speakerState.state == GDU_WIDGET_SPEAKER_STATE_PLAYING) {
             if (s_speakerState.playMode == GDU_WIDGET_SPEAKER_PLAY_MODE_LOOP_PLAYBACK) {
                 if (s_speakerState.workMode == GDU_WIDGET_SPEAKER_WORK_MODE_VOICE) {
-                    USER_LOG_DEBUG("Waiting opus decoder finished...");
-                    while (s_isDecodeFinished == false) {
-                        osalHandler->TaskSleepMs(1);
-                    }
-                    gduReturnCode = GduTest_PlayAudioData();
-                    if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                        USER_LOG_ERROR("Play audio data failed, error: 0x%08llX.", gduReturnCode);
-                    }
+					if(OPUS == s_isAudioType )
+					{
+                    	USER_LOG_DEBUG("Waiting opus decoder finished...");
+                    	while (s_isDecodeFinished == false) {
+                    	    osalHandler->TaskSleepMs(1);
+                    	}
+                    	gduReturnCode = GduTest_PlayAudioData();
+                    	if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    	    USER_LOG_ERROR("Play audio data failed, error: 0x%08llX.", gduReturnCode);
+                    	}
+					}
+					else if(MP3 == s_isAudioType )
+					{
+                    	gduReturnCode = GduTest_PlayMp3AudioData();
+                    	if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    	    USER_LOG_ERROR("Play mp3 audio data failed, error: 0x%08llX.", gduReturnCode);
+                    	}
+					}
                 } else {
                     gduReturnCode = GduTest_PlayTtsData();
                     if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -686,43 +859,52 @@ static void *GduTest_WidgetSpeakerTask(void *arg)
                 osalHandler->TaskSleepMs(1000);
             } else {
                 if (s_speakerState.workMode == GDU_WIDGET_SPEAKER_WORK_MODE_VOICE) {
-                    USER_LOG_DEBUG("Waiting opus decoder finished...");
-                    while (s_isDecodeFinished == false) {
-                        osalHandler->TaskSleepMs(1);
-                    }
-                    gduReturnCode = GduTest_PlayAudioData();
-                    if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                        USER_LOG_ERROR("Play audio data failed, error: 0x%08llX.", gduReturnCode);
-                    }
-                } else {
-                    gduReturnCode = GduTest_PlayTtsData();
-                    if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                        USER_LOG_ERROR("Play tts data failed, error: 0x%08llX.", gduReturnCode);
-                    }
-                }
+					if(OPUS == s_isAudioType )
+					{
+						USER_LOG_DEBUG("Waiting opus decoder finished...");
+						while (s_isDecodeFinished == false) {
+							osalHandler->TaskSleepMs(1);
+						}
+						gduReturnCode = GduTest_PlayAudioData();
+						if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+							USER_LOG_ERROR("Play audio data failed, error: 0x%08llX.", gduReturnCode);
+						}
+					}
+					else if(MP3 == s_isAudioType )
+					{
+                    	gduReturnCode = GduTest_PlayMp3AudioData();
+                    	if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                    	    USER_LOG_ERROR("Play mp3 audio data failed, error: 0x%08llX.", gduReturnCode);
+                    	}
+					}
+				} else {
+					gduReturnCode = GduTest_PlayTtsData();
+					if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+						USER_LOG_ERROR("Play tts data failed, error: 0x%08llX.", gduReturnCode);
+					}
+				}
 
-                gduReturnCode = osalHandler->MutexLock(s_speakerMutex);
-                if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_ERROR("lock mutex error: 0x%08llX.", gduReturnCode);
-                }
+				gduReturnCode = osalHandler->MutexLock(s_speakerMutex);
+				if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+					USER_LOG_ERROR("lock mutex error: 0x%08llX.", gduReturnCode);
+				}
 
-                if (s_speakerState.playMode == GDU_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY) {
-                    s_speakerState.state = GDU_WIDGET_SPEAKER_STATE_IDEL;
-                }
+				if (s_speakerState.playMode == GDU_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY) {
+					s_speakerState.state = GDU_WIDGET_SPEAKER_STATE_IDEL;
+				}
 
-                gduReturnCode = osalHandler->MutexUnlock(s_speakerMutex);
-                if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-                    USER_LOG_ERROR("unlock mutex error: 0x%08llX.", gduReturnCode);
-                }
-            }
-        }
-    }
+				gduReturnCode = osalHandler->MutexUnlock(s_speakerMutex);
+				if (gduReturnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+					USER_LOG_ERROR("unlock mutex error: 0x%08llX.", gduReturnCode);
+				}
+			}
+		}
+	}
 }
 
 #ifndef __CC_ARM
 #pragma GCC diagnostic pop
 #endif
-
 #endif
-
 /****************** (C) COPYRIGHT GDU Innovations *****END OF FILE****/
+

@@ -45,9 +45,9 @@
 - "stm32xxxxx_{eval}{discovery}_sdram.c"
 EndBSPDependencies */
 
-#define DJI_CDC_CTRL_BINTERFACE_NUMBER 4
-#define DJI_CDC_DATA_BINTERFACE_NUMBER 5
-#define DJI_CDC_DATA_ALT_SETTINGS      0
+#define GDU_CDC_CTRL_BINTERFACE_NUMBER 4
+#define GDU_CDC_DATA_BINTERFACE_NUMBER 5
+#define GDU_CDC_DATA_ALT_SETTINGS      0
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_cdc.h"
@@ -128,8 +128,8 @@ static void CDC_ProcessReception(USBH_HandleTypeDef *phost);
 
 USBH_ClassTypeDef CDC_Class =
     {
-        "DJI_CDC",
-        DJI_CDC_CLASS,
+        "GDU_CDC",
+        GDU_CDC_CLASS,
         USBH_CDC_InterfaceInit,
         USBH_CDC_InterfaceDeInit,
         USBH_CDC_ClassRequest,
@@ -201,7 +201,7 @@ static USBH_StatusTypeDef USBH_CDC_InterfaceInit(USBH_HandleTypeDef *phost)
 
     interface = USBH_FindInterface(phost, COMMUNICATION_INTERFACE_CLASS_CODE,
                                    ABSTRACT_CONTROL_MODEL, COMMON_AT_COMMAND);
-    USBH_DbgLog("DJI USB ctrl interface : %d", interface);
+    USBH_DbgLog("GDU USB ctrl interface : %d", interface);
     if ((interface == 0xFFU) || (interface >= USBH_MAX_NUM_INTERFACES)) /* No Valid Interface */
     {
         USBH_DbgLog("Cannot Find the interface for Communication Interface Class, name:%s", phost->pActiveClass->Name);
@@ -245,7 +245,7 @@ static USBH_StatusTypeDef USBH_CDC_InterfaceInit(USBH_HandleTypeDef *phost)
     interface = USBH_FindInterface(phost, DATA_INTERFACE_CLASS_CODE,
                                    RESERVED, NO_CLASS_SPECIFIC_PROTOCOL_CODE);
     */
-    interface = USBH_FindInterfaceIndex(phost, DJI_CDC_DATA_BINTERFACE_NUMBER, DJI_CDC_DATA_ALT_SETTINGS);
+    interface = USBH_FindInterfaceIndex(phost, GDU_CDC_DATA_BINTERFACE_NUMBER, GDU_CDC_DATA_ALT_SETTINGS);
     if ((interface == 0xFFU) || (interface >= USBH_MAX_NUM_INTERFACES)) /* No Valid Interface */
     {
         USBH_DbgLog("Cannot Find the interface for Data Interface Class, name:%s", phost->pActiveClass->Name);

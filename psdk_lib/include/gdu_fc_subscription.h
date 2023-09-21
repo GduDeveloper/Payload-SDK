@@ -520,7 +520,13 @@ typedef enum {
      */
     GDU_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX2 = GDU_DATA_SUBSCRIPTION_TOPIC(GDU_DATA_SUBSCRIPTION_MODULE_FC,
                                                                                        47),
-
+    /*!
+     * @brief euler angle information topic name. Please refer to ::T_GduAttitude3d for information about data structure.
+     * @datastruct \ref T_GduAttitude3d
+     */
+    GDU_FC_SUBSCRIPTION_TOPIC_EULER_ANGLE_INFO = GDU_DATA_SUBSCRIPTION_TOPIC(GDU_DATA_SUBSCRIPTION_MODULE_FC,
+                                                                                       48),
+                                                                                       
     /*! Total number of topics that can be subscribed. */
     GDU_FC_SUBSCRIPTION_TOPIC_TOTAL_NUMBER,
 } E_GduFcSubscriptionTopic;

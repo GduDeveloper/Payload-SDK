@@ -242,10 +242,10 @@ typedef struct {
 
 #pragma pack(1)
 typedef struct {
-    gdu_f32_t x;   /*!< Control with respect to the x axis.*/
-    gdu_f32_t y;   /*!< Control with respect to the y axis.*/
-    gdu_f32_t z;   /*!< Control with respect to the z axis, up is positive. */
-    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. the ground frame.*/
+    gdu_f32_t x;   /*!< Control with respect to the x axis. value range : 1000-2000*/
+    gdu_f32_t y;   /*!< Control with respect to the y axis. value range : 1000-2000*/
+    gdu_f32_t z;   /*!< Control with respect to the z axis, up is positive. value range : 1000-2000*/
+    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. the ground frame. value range : 1000-2000*/
 } T_GduFlightControllerJoystickCommand;// pack(1)
 
 typedef struct {

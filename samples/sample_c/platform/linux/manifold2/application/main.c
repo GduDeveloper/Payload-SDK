@@ -51,6 +51,7 @@
 #include "gdu_sdk_app_info.h"
 #include "gdu_aircraft_info.h"
 #include "widget/test_widget.h"
+#include "widget/test_widget_speaker.h"
 //#include "widget_interaction_test/test_widget_interaction.h"
 //#include "data_transmission/test_data_transmission.h"
 #include "gdu_sdk_config.h"
@@ -110,13 +111,13 @@ int main(int argc, char **argv)
 		.Free = Osal_Free,
 		.GetTimeMs = Osal_GetTimeMs,
 		.GetTimeUs = Osal_GetTimeUs,
-		.GetIPAddr = Osal_GetTimeUs,
+		//.GetIPAddr = Osal_GetIpAddr,
 
 	};
 	T_GduLoggerConsole printConsole = {
 		.func = GduUser_PrintConsole,
-		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
-		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
+		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
+		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
 		.isSupportColor = true,
 	};
 
@@ -339,6 +340,13 @@ int main(int argc, char **argv)
 			USER_LOG_ERROR("widget sample init error");
 		}
 #endif
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+		returnCode = GduTest_WidgetSpeakerStartService();
+		if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("widget speaker test init error");
+		}
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON

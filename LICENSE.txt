@@ -1,11 +1,11 @@
-The following portions of the DJI’s Payload SDK (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is available at https://opensource.org/licenses/MIT.
+The following portions of the GDU’s Payload SDK (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is available at https://opensource.org/licenses/MIT.
 
 .
 ├── CMakeLists.txt
 ├── doc
-│   ├── dji_sdk_code_style
-│   │   ├── dji_sdk_template.c
-│   │   └── dji_sdk_template.h
+│   ├── gdu_sdk_code_style
+│   │   ├── gdu_sdk_template.c
+│   │   └── gdu_sdk_template.h
 │   └── simple_model
 │       ├── M300_OSDK_Adapter.stp
 │       ├── M300_RTK_1.stp
@@ -17,34 +17,34 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 ├── LICENSE.txt
 ├── psdk_lib
 │   ├── include
-│   │   ├── dji_aircraft_info.h
-│   │   ├── dji__manager.h
-│   │   ├── dji_core.h
-│   │   ├── dji_error.h
-│   │   ├── dji_fc_subscription.h
-│   │   ├── dji_flight_controller.h
-│   │   ├── dji_gimbal.h
-│   │   ├── dji_gimbal_manager.h
-│   │   ├── dji_high_speed_data_channel.h
-│   │   ├── dji_hms.h
-│   │   ├── dji_hms_info_table.h
-│   │   ├── dji_liveview.h
-│   │   ├── dji_logger.h
-│   │   ├── dji_low_speed_data_channel.h
-│   │   ├── dji_mop_channel.h
-│   │   ├── dji_payload_.h
-│   │   ├── dji_perception.h
-│   │   ├── dji_platform.h
-│   │   ├── dji_positioning.h
-│   │   ├── dji_power_management.h
-│   │   ├── dji_time_sync.h
-│   │   ├── dji_typedef.h
-│   │   ├── dji_upgrade.h
-│   │   ├── dji_version.h
-│   │   ├── dji_waypoint_v2.h
-│   │   ├── dji_waypoint_v2_type.h
-│   │   ├── dji_widget.h
-│   │   ├── dji_xport.h
+│   │   ├── gdu_aircraft_info.h
+│   │   ├── gdu__manager.h
+│   │   ├── gdu_core.h
+│   │   ├── gdu_error.h
+│   │   ├── gdu_fc_subscription.h
+│   │   ├── gdu_flight_controller.h
+│   │   ├── gdu_gimbal.h
+│   │   ├── gdu_gimbal_manager.h
+│   │   ├── gdu_high_speed_data_channel.h
+│   │   ├── gdu_hms.h
+│   │   ├── gdu_hms_info_table.h
+│   │   ├── gdu_liveview.h
+│   │   ├── gdu_logger.h
+│   │   ├── gdu_low_speed_data_channel.h
+│   │   ├── gdu_mop_channel.h
+│   │   ├── gdu_payload_.h
+│   │   ├── gdu_perception.h
+│   │   ├── gdu_platform.h
+│   │   ├── gdu_positioning.h
+│   │   ├── gdu_power_management.h
+│   │   ├── gdu_time_sync.h
+│   │   ├── gdu_typedef.h
+│   │   ├── gdu_upgrade.h
+│   │   ├── gdu_version.h
+│   │   ├── gdu_waypoint_v2.h
+│   │   ├── gdu_waypoint_v2_type.h
+│   │   ├── gdu_widget.h
+│   │   ├── gdu_xport.h
 │   │   └── legacy_psdk2.x
 │   │       ├── psdk_aircraft_info.h
 │   │       ├── psdk_core.h
@@ -103,13 +103,13 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   ├── sample_c
 │   │   ├── module_sample
 │   │   │   ├── _emu
-│   │   │   │   ├── dji_media_file_manage
-│   │   │   │   │   ├── dji_media_file_core.c
-│   │   │   │   │   ├── dji_media_file_core.h
-│   │   │   │   │   ├── dji_media_file_jpg.c
-│   │   │   │   │   ├── dji_media_file_jpg.h
-│   │   │   │   │   ├── dji_media_file_mp4.c
-│   │   │   │   │   └── dji_media_file_mp4.h
+│   │   │   │   ├── gdu_media_file_manage
+│   │   │   │   │   ├── gdu_media_file_core.c
+│   │   │   │   │   ├── gdu_media_file_core.h
+│   │   │   │   │   ├── gdu_media_file_jpg.c
+│   │   │   │   │   ├── gdu_media_file_jpg.h
+│   │   │   │   │   ├── gdu_media_file_mp4.c
+│   │   │   │   │   └── gdu_media_file_mp4.h
 │   │   │   │   ├── media_file
 │   │   │   │   │   ├── out.h264
 │   │   │   │   │   ├── PSDK_0001_ORG.jpg
@@ -278,8 +278,8 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │       │   │       └── upgrade_platform_opt_linux.h
 │   │       │   └── manifold2
 │   │       │       ├── application
-│   │       │       │   ├── dji_sdk_app_info.h
-│   │       │       │   ├── dji_sdk_config.h
+│   │       │       │   ├── gdu_sdk_app_info.h
+│   │       │       │   ├── gdu_sdk_config.h
 │   │       │       │   └── main.c
 │   │       │       ├── CMakeLists.txt
 │   │       │       └── hal
@@ -298,16 +298,16 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │   │               ├── application
 │   │               │   ├── application.c
 │   │               │   ├── application.h
-│   │               │   ├── dji_sdk_app_info.h
-│   │               │   ├── dji_sdk_config.h
+│   │               │   ├── gdu_sdk_app_info.h
+│   │               │   ├── gdu_sdk_config.h
 │   │               │   ├── FreeRTOSConfig.h
 │   │               │   └── main.c
 │   │               ├── drivers
 │   │               │   ├── BSP
 │   │               │   │   ├── apply_high_power.c
 │   │               │   │   ├── apply_high_power.h
-│   │               │   │   ├── dji_ringbuffer.c
-│   │               │   │   ├── dji_ringbuffer.h
+│   │               │   │   ├── gdu_ringbuffer.c
+│   │               │   │   ├── gdu_ringbuffer.h
 │   │               │   │   ├── freertos.c
 │   │               │   │   ├── led.c
 │   │               │   │   ├── led.h
@@ -394,10 +394,10 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │       │   │   │   └── tensorflow
 │       │   │   │       ├── frozen_inference_graph.pb
 │       │   │   │       └── ssd_inception_v2_coco_2017_11_17.pbtxt
-│       │   │   ├── dji__image_handler.cpp
-│       │   │   ├── dji__image_handler.hpp
-│       │   │   ├── dji__stream_decoder.cpp
-│       │   │   ├── dji__stream_decoder.hpp
+│       │   │   ├── gdu__image_handler.cpp
+│       │   │   ├── gdu__image_handler.hpp
+│       │   │   ├── gdu__stream_decoder.cpp
+│       │   │   ├── gdu__stream_decoder.hpp
 │       │   │   ├── test_liveview.cpp
 │       │   │   ├── test_liveview_entry.cpp
 │       │   │   ├── test_liveview_entry.hpp
@@ -417,7 +417,7 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
 │                   ├── application
 │                   │   ├── application.cpp
 │                   │   ├── application.hpp
-│                   │   ├── dji_sdk_app_info.h
+│                   │   ├── gdu_sdk_app_info.h
 │                   │   └── main.cpp
 │                   ├── CMakeLists.txt
 │                   ├── FindFFMPEG.cmake
@@ -433,14 +433,14 @@ The following portions of the DJI’s Payload SDK (“Software” referred to in
         ├── file2c.exe
         └── readme.txt
 
-Unless otherwise agreed, all other portions of DJI’s Payload SDK are and will be made available under the SDK End User License Agreement (EULA). A copy of the SDK EULA is distributed with this software and is available at https://developer.dji.com/policies/eula/.
+Unless otherwise agreed, all other portions of GDU’s Payload SDK are and will be made available under the SDK End User License Agreement (EULA). A copy of the SDK EULA is distributed with this software and is available at https://developer.gdu.com/policies/eula/.
 -------------------------------------------------------------
-Copyright (c) 2021 DJI.
+Copyright (c) 2021 GDU.
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ===============================================================
-DJI’s Payload SDK uses libraries of List and MD5, whose license is as below.
+GDU’s Payload SDK uses libraries of List and MD5, whose license is as below.
 
 -------------------------------------------------------------
 crypto-algorithms
@@ -464,7 +464,7 @@ The source code for each algorithm will come in a pair of a source code file and
 inter-header file dependencies, no additional libraries, no platform-specific header files, or any other complicating
 matters. Compiling them should be as easy as adding the relevent source code to the project.
 ===============================================================
-DJI’s Payload SDK uses libraries of CMSIS (https://developer.arm.com/tools-and-software/embedded/cmsis), which is licensed under the Apache License, Version 2.0. A copy of the Apache license is provided below and is also available at http://www.apache.org/licenses/LICENSE-2.0.
+GDU’s Payload SDK uses libraries of CMSIS (https://developer.arm.com/tools-and-software/embedded/cmsis), which is licensed under the Apache License, Version 2.0. A copy of the Apache license is provided below and is also available at http://www.apache.org/licenses/LICENSE-2.0.
 
 -------------------------------------------------------------
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
@@ -515,7 +515,7 @@ You may add Your own copyright statement to Your modifications and may provide a
 
 END OF TERMS AND CONDITIONS
 ===============================================================
-DJI’s Payload SDK uses unmodified libraries of cJSON, whose license is as below.
+GDU’s Payload SDK uses unmodified libraries of cJSON, whose license is as below.
 
 -------------------------------------------------------------
   Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
@@ -538,7 +538,7 @@ DJI’s Payload SDK uses unmodified libraries of cJSON, whose license is as belo
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 ===============================================================
-DJI’s Payload SDK uses unmodified libraries of freeRTOS (http://www.FreeRTOS.org), which is licensed under the MIT License. Full license text is available on the following link: http://www.freertos.org/a00114.html. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+GDU’s Payload SDK uses unmodified libraries of freeRTOS (http://www.FreeRTOS.org), which is licensed under the MIT License. Full license text is available on the following link: http://www.freertos.org/a00114.html. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
 
 -------------------------------------------------------------
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -559,7 +559,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ===============================================================
-DJI’s Payload SDK uses unmodified libraries of STM32F4xx_HAL_Driver, BSP STM324xG_EVAL libraries and STM32 Projects libraries in STM32CubeF4 package, which is licensed by ST under BSD 3-Clause license. A copy of the license is provided below and is also available at opensource.org/licenses/BSD-3-Clause.
+GDU’s Payload SDK uses unmodified libraries of STM32F4xx_HAL_Driver, BSP STM324xG_EVAL libraries and STM32 Projects libraries in STM32CubeF4 package, which is licensed by ST under BSD 3-Clause license. A copy of the license is provided below and is also available at opensource.org/licenses/BSD-3-Clause.
 
 -------------------------------------------------------------
 Note: This license has also been called the "New BSD License" or "Modified BSD License". See also the 2-clause BSD License.

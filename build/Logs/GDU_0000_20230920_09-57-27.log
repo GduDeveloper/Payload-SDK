@@ -1,0 +1,4 @@
+[0.000][core]-[debug]-[GduCore_Init:72) LIB VERSION: 0.0.24
+[0.000][link]-[error]-[GduSerial_Init:24) uart init error 
+[0.000][core]-[error]-[GduCore_Init:78) core serial init error
+[0.000][user]-[error]-[main:242) core init error
