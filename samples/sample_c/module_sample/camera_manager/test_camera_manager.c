@@ -477,7 +477,7 @@ T_GduReturnCode GduTest_CameraManagerStartShootSinglePhoto(E_GduMountPosition po
 
     /*!< set shoot-photo mode */
     USER_LOG_INFO("Set mounted position %d camera's shoot photo mode as single-photo mode", position);
-    returnCode = GduCameraManager_SetShootPhotoMode(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_SINGLE);
+    returnCode = GduCameraManager_SetShootPhotoMode(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_AEB);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
         returnCode != GDU_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
         USER_LOG_ERROR("set mounted position %d camera's shoot photo mode as single-photo mode failed,"
@@ -491,7 +491,7 @@ T_GduReturnCode GduTest_CameraManagerStartShootSinglePhoto(E_GduMountPosition po
 
     /*!< start to shoot single photo */
     USER_LOG_INFO("Mounted position %d camera start to shoot photo", position);
-    returnCode = GduCameraManager_StartShootPhoto(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_SINGLE);
+    returnCode = GduCameraManager_StartShootPhoto(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_AEB);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Mounted position %d camera shoot photo failed, "
                        "error code :0x%08X", position, returnCode);
@@ -911,14 +911,24 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
                 "--> Function f: Set camera tap zoom point from (5x, 0.3m, 0.3m) to (4x, 0.8m, 0.7m)");
             tapZoomPosData.focusX = 0.3f;
             tapZoomPosData.focusY = 0.3f;
-            returnCode = GduTest_CameraManagerSetTapZoomPoint(mountPosition, 5, tapZoomPosData);
+            returnCode = GduTest_CameraManagerSetTapZoomPoint(mountPosition, 1, tapZoomPosData);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's tap zoom point(5, 0.3m,0.3m) failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
             }
 
             USER_LOG_INFO("Sleep 5s...");
-            osalHandler->TaskSleepMs(5000);
+            {
+                int i = 0;
+                for(i = 0; i < 5; i++)
+                {
+                    osalHandler->TaskSleepMs(1000);
+                    uint8_t tapZoomMultiplier = 0;
+                    GduCameraManager_GetTapZoomMultiplier(mountPosition, &tapZoomMultiplier);
+                    USER_LOG_DEBUG("tapZoomMultiplier:%d", tapZoomMultiplier);
+                }
+            }
+            
 
             tapZoomPosData.focusX = 0.8f;
             tapZoomPosData.focusY = 0.7f;
@@ -1035,18 +1045,34 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
             }
 
             USER_LOG_INFO("Sleep 10s...");
-            osalHandler->TaskSleepMs(10000);
+            {
+                int i = 0;
+                for(i = 0; i < 10; i++)
+                {
+                    E_GduCameraManagerRecordingState state;
+                    GduCameraManager_GetRecordingState(mountPosition, &state);
+                    osalHandler->TaskSleepMs(1000);
+                    USER_LOG_DEBUG("----------------------------record state:%d", state);
+                }
+            }
+            
 
             returnCode = GduTest_CameraManagerStopRecordVideo(mountPosition);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Mounted position %d camera stop record video failed, error code: 0x%08X\r\n",
                                mountPosition, returnCode);
             }
+
+            {
+                E_GduCameraManagerRecordingState state;
+                GduCameraManager_GetRecordingState(mountPosition, &state);
+                USER_LOG_DEBUG("---------------------------------record state:%d", state);
+            }
             break;
         }
         case E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_DOWNLOAD_AND_DELETE_MEDIA_FILE:
 #ifdef SYSTEM_ARCH_LINUX
-            GduTest_CameraManagerMediaDownloadAndDeleteMediaFile(mountPosition);
+           GduTest_CameraManagerMediaDownloadAndDeleteMediaFile(mountPosition);
 #else
             USER_LOG_WARN("This feature does not support RTOS platform.");
 #endif

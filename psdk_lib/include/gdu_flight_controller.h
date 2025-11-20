@@ -275,26 +275,6 @@ T_GduReturnCode GduFlightController_Init(void);
 T_GduReturnCode GduFlightController_Deinit(void);
 
 /**
- * @brief Enable/Disable RTK position function.
- * @details Enabling RTK means that RTK data will be used instead of GPS during flight.
- * @param rtkEnableStatus: see reference of "E_GduFlightControllerRtkPositionEnableStatus".
- * It keeps in sync with pilot's param.
- * @return Execution result.
- */
-T_GduReturnCode
-GduFlightController_SetRtkPositionEnableStatus(E_GduFlightControllerRtkPositionEnableStatus rtkEnableStatus);
-
-/**
- * @brief Get RTK enable status.
- * @note Enabling RTK means that RTK data will be used during intelligent flight.
- * @param rtkEnableStatus: see reference of "E_GduFlightControllerRtkPositionEnableStatus".
- * It keeps in sync with pilot's param.
- * @return Execution result.
- */
-T_GduReturnCode
-GduFlightController_GetRtkPositionEnableStatus(E_GduFlightControllerRtkPositionEnableStatus *rtkEnableStatus);
-
-/**
  * @brief Set rc lost action.
  * @note It will be valid when rc and osdk is both lost.It only support M320.
  * @param rcLostAction: actions when rc is lost.(hover/landing/go home).It keeps in sync with pilot's param.
@@ -420,28 +400,6 @@ T_GduReturnCode GduFlightController_SetDownwardsVisualObstacleAvoidanceEnableSta
 T_GduReturnCode GduFlightController_GetDownwardsVisualObstacleAvoidanceEnableStatus(
     E_GduFlightControllerObstacleAvoidanceEnableStatus *downwardsObstacleAvoidanceEnableStatus);
 
-/**
- * @brief Arrest flying.
- * @note when the UAV is on the ground ,it will stop motors and display "hms description" on APP. when the UAV is
- * in the air, it will continue flying and display "hms description" on APP only.
- * If you use this interface, you need to use "GduFlightController_CancelArrestFlying" to quit arrest-flying status, then
- * then the UAV can fly again.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_ArrestFlying(void);
-
-/**
- * @brief Quit status of arrest-flying.
- * @note The UAV need to quit status of arrest-flying to continue flying after arresting flying.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_CancelArrestFlying(void);
-
-/**
- * @brief Turn on motors when the UAV is on the ground.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_TurnOnMotors(void);
 
 /**
  * @brief Turn off motors when the UAV is on the ground.
@@ -476,15 +434,6 @@ T_GduReturnCode GduFlightController_StartLanding(void);
  * @return Execution result.
  */
 T_GduReturnCode GduFlightController_CancelLanding(void);
-
-/**
- * @brief Confirm the landing when the UAV is 0.7m above the ground.
- * @note When the clearance between the aircraft and the ground is less than 0.7m, the aircraft will pause landing and
- * wait for user's confirmation.This api use for confirm landing. If the ground is not suitable for landing ,user must
- * use RC to control it landing manually or force landing.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_StartConfirmLanding(void);
 
 /**
  * @brief Force landing in any case.
@@ -543,34 +492,6 @@ T_GduReturnCode GduFlightController_StartGoHome(void);
 T_GduReturnCode GduFlightController_CancelGoHome(void);
 
 /**
- * @brief Obtain UAV's joystick control authority.
- * @note 1.You have to obtain joystick control authority successfully before you using joystick to control UAV.
- * 2. RC must be in p-mode.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_ObtainJoystickCtrlAuthority(void);
-
-/**
- * @brief Release UAV's joystick control authority.
- * @note RC must be in p-mode.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_ReleaseJoystickCtrlAuthority(void);
-
-/**
- * @brief Subscribe to joystick control authority switch event with a callback function.
- * @note it will be triggered once the joystick control authority switch event occurs.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_RegJoystickCtrlAuthorityEventCallback(JoystickCtrlAuthorityEventCbFunc callback);
-
-/**
- * @brief Set expected joystick mode before requesting joystick.
- * @param joystickMode: include horizontal/vertical/yaw control mode, stable control mode.
- */
-void GduFlightController_SetJoystickMode(T_GduFlightControllerJoystickMode joystickMode);
-
-/**
  * @brief Request execute joystick action.
  * @param joystickCommand: include x/y/z/yaw.
  * @return Execution result.
@@ -584,39 +505,12 @@ T_GduReturnCode GduFlightController_ExecuteJoystickAction(T_GduFlightControllerJ
 T_GduReturnCode GduFlightController_ExecuteEmergencyBrakeAction(void);
 
 /**
- * @brief Request cancel emergency brake action.
- * @note It is only support on M320.If you use GduFlightController_ExecuteEmergencyBrakeAction(), you need to use
- * "GduFlightController_CancelEmergencyBrakeAction()" to allow aircraft to execute drone action again.
- * @return Execution result.
- */
-T_GduReturnCode GduFlightController_CancelEmergencyBrakeAction(void);
-/**
  * @brief Get general info of the aircraft.
  * @param generalInfo: the struct stored the serial num which contains a array of chars var in case the user gives an
  * illegal length character pointer
  * @return Execution result.
  */
 T_GduReturnCode GduFlightController_GetGeneralInfo(T_GduFlightControllerGeneralInfo *generalInfo);
-
-/*! @brief The command decides whether execute RC lost action or not when osdk is running
-  * @note  This setting only affects the behavior of the drone when the RC lost and the OSDK is connected.
-  *         if the command is enable, the drone will not execute rc lost action when rc is lost but OSDK is running;
-  *         if the command is disable, the drone will execute rc lost action when rc is lost but OSDK is running
-  *         the drone will execute rc lost action when rc is lost and OSDK is lost whatever the command is.
-  *         default command is disable.
-  * @param executeRCLostActionOrNotWhenOnboardOn  enable:1;disable:0
-  * @return T_GduReturnCode error code
-   */
-	T_GduReturnCode
-GduFlightController_SetRCLostActionEnableStatus(E_GduFlightControllerRCLostActionEnableStatus command);
-
-/*! @brief get rc lost action enable status(enable or disable)
- *  @param command executeRCLostActionOrNotWhenOnboardOn, enable:1;disable:0
- *  @return  T_GduReturnCode error code
- */
-T_GduReturnCode
-GduFlightController_GetEnableRCLostActionStatus(E_GduFlightControllerRCLostActionEnableStatus *command);
-
 
 #ifdef __cplusplus
 }

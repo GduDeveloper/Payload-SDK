@@ -563,9 +563,9 @@ typedef enum {
 
 typedef enum {
     GDU_CAMERA_MANAGER_RECORDING_STATE_IDLE = 0,
-    GDU_CAMERA_MANAGER_RECORDING_STATE_STARTING = 0,
-    GDU_CAMERA_MANAGER_RECORDING_STATE_RECORDING = 0,
-    GDU_CAMERA_MANAGER_RECORDING_STATE_STOPPING = 0,
+    GDU_CAMERA_MANAGER_RECORDING_STATE_STARTING = 1,
+    GDU_CAMERA_MANAGER_RECORDING_STATE_RECORDING = 2,
+    GDU_CAMERA_MANAGER_RECORDING_STATE_STOPPING = 3,
 } E_GduCameraManagerRecordingState;
 
 /*!< Attention: when the remote control is in split-screen mode, the coordinate range of the x-axis is 0 ~ 0.5
