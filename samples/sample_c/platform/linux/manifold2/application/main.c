@@ -343,6 +343,16 @@ int main(int argc, char **argv)
 		}
 #endif
 
+#ifdef CONFIG_MODULE_SAMPLE_FLIGHT_CTRL_ON
+		if (GduFlightController_Init() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("psdk flight controller init error");
+		}
+		else
+		{
+			USER_LOG_ERROR("888");
+		}
+#endif
+
 #ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
 #if GDU_USE_WIDGET_INTERACTION
 		returnCode = GduTest_WidgetInteractionStartService();
@@ -390,11 +400,18 @@ int main(int argc, char **argv)
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Init camera manager failed, error code: 0x%08X\r\n", returnCode);
     }
-		// returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_CAMERA_SHUTTER_SPEED);
-		// if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-		// 	USER_LOG_ERROR("Payload collaboration sample init error\n");
-		// }
-	GduTest_GimbalManagerRunSample(0, GDU_GIMBAL_MODE_FREE);
+	returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_BURST_PHOTO);
+	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+		USER_LOG_ERROR("Payload collaboration sample init error\n");
+	}
+
+	// returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO);
+	// if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+	// 	USER_LOG_ERROR("Payload collaboration sample init error\n");
+	// }
+
+	
+	// GduTest_GimbalManagerRunSample(0, GDU_GIMBAL_MODE_FREE);
  #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON

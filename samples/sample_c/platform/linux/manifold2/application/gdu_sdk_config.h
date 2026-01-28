@@ -64,6 +64,8 @@ extern "C" {
 * */
 //#define CONFIG_MODULE_SAMPLE_MOP_CHANNEL_ON
 
+#define CONFIG_MODULE_SAMPLE_FLIGHT_CTRL_ON
+
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/

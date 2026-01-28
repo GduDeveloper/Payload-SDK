@@ -38,7 +38,7 @@ extern "C" {
 #define EMERGENCY_STOP_MOTOR_MSG_MAX_LENGTH 10 /*!<  Max length of emergency stop motor message. */
 
 /* Exported types ------------------------------------------------------------*/
-typedef uint16_t E_GduFlightControllerGoHomeAltitude; /*!< Unit:meter, range 20~500 */
+typedef uint16_t E_GduFlightControllerGoHomeAltitude; /*!< range 2000~50000 表示20-500米范围   50020-51500 表示20-1500米范围 */
 
 /**
  * @brief The UAV's actions when rc is lost.
@@ -247,7 +247,7 @@ typedef struct {
     gdu_f32_t x;   /*!< Control with respect to the x axis. */
     gdu_f32_t y;   /*!< Control with respect to the y axis.*/
     gdu_f32_t z;   /*!< Control with respect to the z axis, up is positive.*/
-    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. the ground frame.*/
+    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. range: (-PI，PI] */
 } T_GduFlightControllerJoystickCommand;// pack(1)
 
 typedef struct {

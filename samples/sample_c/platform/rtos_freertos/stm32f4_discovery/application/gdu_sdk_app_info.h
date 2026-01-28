@@ -33,8 +33,8 @@ extern "C" {
 #endif
 
 /* Exported constants --------------------------------------------------------*/
-// ATTENTION: S400 serial aircraft if you use bottom port link your device USER_BAUD_RATE use 460800 else USER_BAUD_RATE use 230400  
-//S200 serial aircraft USER_BAUD_RATE 230400
+// ATTENTION: User must goto https://developer.gdu.com/user/apps/#all to create your own gdu sdk application, get gdu sdk application
+// information then fill in the application information here.
 #if 0
 #define USER_APP_NAME               "your_app_name"
 #define USER_APP_ID                 "your_app_id"

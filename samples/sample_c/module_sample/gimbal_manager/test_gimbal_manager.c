@@ -76,6 +76,9 @@ T_GduReturnCode GduTest_GimbalManagerRunSample(E_GduMountPosition mountPosition,
     T_GduGimbalManagerRotation rotation;
     T_GduAircraftInfoBaseInfo baseInfo;
     E_GduAircraftSeries aircraftSeries;
+    T_GduReturnCode gduStat;
+	T_GduDataTimestamp  timestamp;
+    T_GduAttitude3d eulerInfo;
 
     returnCode = GduAircraftInfo_GetBaseInfo(&baseInfo);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -86,7 +89,7 @@ T_GduReturnCode GduTest_GimbalManagerRunSample(E_GduMountPosition mountPosition,
     USER_LOG_INFO("Gimbal manager sample start");
     GduTest_WidgetLogAppend("Gimbal manager sample start");
 
-    returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ, NULL);
+    returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_EULER_ANGLE_INFO, GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ, NULL);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Failed to subscribe topic %d, 0x%08X", GDU_FC_SUBSCRIPTION_TOPIC_GIMBAL_ANGLES, returnCode);
         goto out;
@@ -118,7 +121,7 @@ T_GduReturnCode GduTest_GimbalManagerRunSample(E_GduMountPosition mountPosition,
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Reset gimbal failed, error code: 0x%08X", returnCode);
     }
-
+    osalHandler->TaskSleepMs(5000);
     USER_LOG_INFO("--> Step 4: Rotate gimbal to target angle by action list\r\n");
     for (int i = 0; i < sizeof(s_rotationActionList) / sizeof(T_GduTestGimbalActionList); ++i) {
         if (s_rotationActionList[i].action == GDU_TEST_GIMBAL_RESET) {
@@ -127,17 +130,16 @@ T_GduReturnCode GduTest_GimbalManagerRunSample(E_GduMountPosition mountPosition,
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Reset gimbal failed, error code: 0x%08X", returnCode);
             }
-            osalHandler->TaskSleepMs(2000);
+            osalHandler->TaskSleepMs(5000);
         } else if (s_rotationActionList[i].action == GDU_TEST_GIMBAL_ROTATION) {
 
-            if (gimbalMode == GDU_GIMBAL_MODE_FREE &&
-                s_rotationActionList[i].rotation.rotationMode == GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE) {
-                continue;
-            }
+            // if (gimbalMode == GDU_GIMBAL_MODE_FREE &&
+            //     s_rotationActionList[i].rotation.rotationMode == GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE) {
+            //     continue;
+            // }
 
             rotation = s_rotationActionList[i].rotation;
-
-            USER_LOG_INFO("Target gimbal pry = (%.1f, %.1f, %.1f)", rotation.pitch, rotation.roll, rotation.yaw);
+            USER_LOG_INFO("Target gimbal pry = (%.1f, %.1f, %.1f), mode:%d", rotation.pitch, rotation.roll, rotation.yaw, rotation.rotationMode);
 
             returnCode = GduGimbalManager_Rotate(mountPosition, rotation);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -146,7 +148,7 @@ T_GduReturnCode GduTest_GimbalManagerRunSample(E_GduMountPosition mountPosition,
                                s_rotationActionList[i].rotation.yaw,
                                returnCode);
             }
-            osalHandler->TaskSleepMs(1000);
+            osalHandler->TaskSleepMs(5000);
         }
     }
 

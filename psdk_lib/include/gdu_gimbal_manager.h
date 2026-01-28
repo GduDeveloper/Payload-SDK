@@ -49,6 +49,13 @@ typedef struct {
     gdu_f64_t time; /*!< Expected execution time for gimbal rotation, in seconds. */
 } T_GduGimbalManagerRotation;
 
+
+typedef struct {
+    uint8_t lock; /*wether head of aircraft and gimbal locked. 0:gimbal rotate only 1: gimbal and aircraft rotate together */
+    gdu_f64_t latitude;  /*!< unit: deg */
+    gdu_f64_t longitude; /*!< unit: deg */
+    gdu_f64_t height; /*!< unit: cm */
+} T_GduGimbalManagerLookAt;
 /* Exported functions --------------------------------------------------------*/
 /**
  * @brief Initialize the gimbal manager module.
@@ -62,6 +69,15 @@ T_GduReturnCode GduGimbalManager_Init(void);
  * @return Execution result.
  */
 T_GduReturnCode GduGimbalManager_Deinit(void);
+
+
+/**
+ * @brief move the gimbal to the specified coordinates .
+ * @param mountPosition: unused
+ * @param info: transfer th specified coordinates and move mode
+ * @return Execution result.
+ */
+T_GduReturnCode GduGimbalManager_LookAt(E_GduMountPosition mountPosition, T_GduGimbalManagerLookAt info);
 
 /**
  * @brief Set the work mode of the gimbal.

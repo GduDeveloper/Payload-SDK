@@ -143,7 +143,7 @@ T_GduReturnCode GduTest_WidgetStartService(void)
     //set default ui config
     gduStat = GduWidget_RegDefaultUiConfigByBinaryArray(&enWidgetBinaryArrayConfig);
     if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Add default widget ui config error, stat = 0x%08llX", gduStat);
+        USER_LOG_ERROR("Add widget ui config error, stat = 0x%08llX", gduStat);
         return gduStat;
     }
 #endif

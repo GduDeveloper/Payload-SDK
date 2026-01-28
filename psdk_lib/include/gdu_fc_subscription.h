@@ -1084,6 +1084,12 @@ typedef struct RelativePosition {
     uint8_t leftHealth: 1;  /*!< Left sensor flag: 0 - not working, 1 - working */
     uint8_t upHealth: 1;    /*!< Up sensor health flag: 0 - not working, 1 - working */
     uint8_t reserved: 2;    /*!< Reserved sensor health flag*/
+    bool isAvoid_down;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_front;           /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_right;           /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_back;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_left;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_up;              /*!< 0:not avoid 1:avoid  */
 } T_GduFcSubscriptionAvoidData;
 
 /**
