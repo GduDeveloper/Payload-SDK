@@ -20,7 +20,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-cove
 
 set(PACKAGE_NAME payloadsdk)
 
-## "uname -m" to auto distinguish Manifold2-G or Manifold2-C
+## "uname -m" to auto distinguish aibox-G or aibox-C
 execute_process(COMMAND uname -m
         OUTPUT_VARIABLE DEVICE_SYSTEM_ID)
 

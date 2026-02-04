@@ -507,7 +507,7 @@ static T_GduReturnCode GduUser_FillInUserInfo(T_GduUserInfo *userInfo)
 			!strcmp(USER_DEVELOPER_ACCOUNT, "your_developer_account") ||
 			!strcmp(USER_BAUD_RATE, "your_baud_rate")) {
 		USER_LOG_ERROR(
-				"Please fill in correct user information to 'samples/sample_c/platform/linux/manifold2/application/gdu_sdk_app_info.h' file.");
+				"Please fill in correct user information to 'samples/sample_c/platform/linux/aibox/application/gdu_sdk_app_info.h' file.");
 		return GDU_ERROR_SYSTEM_MODULE_CODE_INVALID_PARAMETER;
 	}
 

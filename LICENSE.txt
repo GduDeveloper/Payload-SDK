@@ -276,7 +276,7 @@ The following portions of the GDU’s Payload SDK (“Software” referred to in
 │   │       │   │   └── upgrade_platform_opt
 │   │       │   │       ├── upgrade_platform_opt_linux.c
 │   │       │   │       └── upgrade_platform_opt_linux.h
-│   │       │   └── manifold2
+│   │       │   └── aibox
 │   │       │       ├── application
 │   │       │       │   ├── gdu_sdk_app_info.h
 │   │       │       │   ├── gdu_sdk_config.h
@@ -413,7 +413,7 @@ The following portions of the GDU’s Payload SDK (“Software” referred to in
 │               │   └── osal
 │               │       ├── osal.c
 │               │       └── osal.h
-│               └── manifold2
+│               └── aibox
 │                   ├── application
 │                   │   ├── application.cpp
 │                   │   ├── application.hpp

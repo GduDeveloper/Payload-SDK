@@ -27,10 +27,10 @@ endif ()
 
 if (USE_SYSTEM_ARCH MATCHES LINUX)
     add_definitions(-DSYSTEM_ARCH_LINUX)
-    add_subdirectory(samples/sample_c/platform/linux/manifold2)
+    add_subdirectory(samples/sample_c/platform/linux/aibox)
 
     message("-- Attention: If you want to use opencv C++ sample, please uncomment the next line.")
-#   add_subdirectory(samples/sample_c++/platform/linux/manifold2)
+#   add_subdirectory(samples/sample_c++/platform/linux/aibox)
 
     set(LIBRARY_PATH psdk_lib/lib/x86_64-linux-gnu-gcc)
 
