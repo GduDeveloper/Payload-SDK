@@ -480,6 +480,13 @@ T_GduReturnCode GduFlightController_SetGoHomeAltitude(E_GduFlightControllerGoHom
 T_GduReturnCode GduFlightController_GetGoHomeAltitude(E_GduFlightControllerGoHomeAltitude *altitude);
 
 /**
+ * @brief set joy stick mode.
+ * @param mode: 0:disable joystick mode, 1:enable joystick mode
+ * @return Execution result.
+ */
+T_GduReturnCode GduFlightController_joyStickCtrlSwitch(E_GduFlightControllerStableControlMode mode);
+
+/**
  * @brief Request go home action when the UAV is in the air
  * @return Execution result.
  */
