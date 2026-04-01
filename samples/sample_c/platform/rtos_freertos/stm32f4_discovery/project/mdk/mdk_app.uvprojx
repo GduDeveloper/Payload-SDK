@@ -366,7 +366,7 @@
               <MiscControls> -DHSE_VALUE=8000000 --diag_suppress=188,177,550,940,66,546 --gnu -DUSE_BOOTLOADER=1 -DUSE_USB_HOST_UART=1</MiscControls>
               <Define>USE_HAL_DRIVER, STM32F407xx, SYSTEM_ARCH_RTOS=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\psdk_lib\lib_src;..\..\..\..\..\module_sample\utils;..\..\..\..\..\..\..\psdk_lib\cJSON;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\..\..\glink\glink_ftp</IncludePath>
+              <IncludePath>..\..\..\..\..\..\..\psdk_lib\include;..\..\..\..\..\module_sample;..\..\..\common\osal;..\..\application;..\..;..\..\hal;..\..\drivers\BSP;..\..\drivers\CMSIS\Include;..\..\drivers\Device\ST\STM32F4xx;..\..\drivers\STM32F4xx_HAL_Driver\Inc;..\..\drivers\USB_HOST\App;..\..\drivers\USB_HOST\Target;..\..\middlewares\ST\STM32_USB_Host_Library\Class\CDC\Inc;..\..\middlewares\ST\STM32_USB_Host_Library\Core\Inc;..\..\middlewares\Third_Party\FreeRTOS\Source\include;..\..\middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F;..\..\middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS;..\..\..\..\..\module_sample\widget;..\..\..\..\..\module_sample\widget\widget_file_c\en_big_screen;..\..\..\..\..\module_sample\upgrade;..\..\..\..\..\..\..\psdk_lib\lib_src;..\..\..\..\..\module_sample\utils;..\..\..\..\..\..\..\psdk_lib\cJSON;..\..\..\..\..\..\..\glink;..\..\..\..\..\..\..\glink\glink_m;..\..\..\..\..\..\..\glink\glink_np;..\..\..\..\..\..\..\glink\glink_ftp;..\..\..\..\..\..\..\develop_project\code\psdk_lib\include;..\..\..\..\..\module_sample\payload_msg</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1728,6 +1728,49 @@
               <FileName>test_upgrade.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\module_sample\upgrade\test_upgrade.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>2</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>test_upgrade_common_file_transfer.c</FileName>
@@ -1763,6 +1806,16 @@
               <FileName>test_camera_manager.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\module_sample\camera_manager\test_camera_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_gimbal_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\gimbal_manager\test_gimbal_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>test_payload_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\module_sample\payload_msg\test_payload_msg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1840,7 +1893,7 @@
                   <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
+                  <IncludeInBuild>1</IncludeInBuild>
                   <AlwaysBuild>2</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
@@ -1888,7 +1941,7 @@
                   <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
+                  <IncludeInBuild>1</IncludeInBuild>
                   <AlwaysBuild>2</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
@@ -2014,6 +2067,49 @@
               <FileName>gdu_upgrade.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\..\develop_project\code\psdk_lib\src\gdu_upgrade.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>2</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>gdu_waypoint_v3.c</FileName>
@@ -2049,6 +2145,16 @@
               <FileName>time_sync.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\..\develop_project\code\psdk_lib\src\time_sync.c</FilePath>
+            </File>
+            <File>
+              <FileName>gdu_gimbal_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\develop_project\code\psdk_lib\src\gdu_gimbal_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>gdu_payload_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\..\develop_project\code\psdk_lib\src\gdu_payload_msg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2204,7 +2310,7 @@
       <component Cclass="Device" Cgroup="Startup" Cvendor="Keil" Cversion="2.6.3" condition="STM32F4 CMSIS">
         <package name="STM32F4xx_DFP" schemaVersion="1.7.2" url="https://www.keil.com/pack/" vendor="Keil" version="2.17.1"/>
         <targetInfos>
-          <targetInfo excluded="1" name="mdk_app"/>
+          <targetInfo excluded="1" name="mdk_app" versionMatchMode=""/>
         </targetInfos>
       </component>
     </components>

@@ -418,6 +418,11 @@ typedef enum {
 } E_GduCameraManagerNightSceneMode;
 
 typedef enum {
+    GDU_CAMERA_MANAGER_LASER_RANGING_DISABLE = 0,
+    GDU_CAMERA_MANAGER_LASER_RANGING_ENABLE = 1,
+} E_GduCameraManagerLaserRanging;
+
+typedef enum {
     GDU_CAMERA_MANAGER_CAPTURE_OR_RECORDING_CAPTURE = 0,
     GDU_CAMERA_MANAGER_CAPTURE_OR_RECORDING_RECORDING = 1,
 } E_GduCameraManagerCaptureOrRecording;
@@ -439,6 +444,16 @@ typedef enum {
 typedef struct {
     uint8_t firmware_version[4];
 } T_GduCameraManagerFirmwareVersion;
+
+typedef struct {
+    uint16_t  ack; /*< 数据,赋值操作,ACK帧:0x00:成功 0x01:失败*/
+    uint16_t  distance; /*< 数据,赋值操作,激光测距距离,低字节在前，单位0.1米*/
+    int32_t  longitude; /*< 数据,赋值操作,目标位置经度*/
+    int32_t  latitude; /*< 数据,赋值操作,目标位置纬度*/
+    int32_t  relative_H; /*< 数据,赋值操作,目标位置相对高度*/
+    int32_t  sea_H; /*< 数据,赋值操作,目标位置海拔高度*/
+    uint16_t  Horizontal_distance; /*< 数据,赋值操作,目标水平距离*/
+} T_GduCameraManagerLaserDistanceInfo;
 
 /*! @brief Tap zoom target point data struct, used by user.
  */
@@ -693,6 +708,23 @@ T_GduReturnCode GduCameraManager_GetCameraType(E_GduMountPosition position, E_Gd
  */
 T_GduReturnCode GduCameraManager_GetFirmwareVersion(E_GduMountPosition position,
                                                     T_GduCameraManagerFirmwareVersion *firmwareVersion);
+
+/**
+ * @brief enable or disable laser period ranging switch
+ * @param position: camera mounted position
+ * @param laserSwitch: switch value
+ * @return Execution result.
+ */
+T_GduReturnCode GduCameraManager_laserPeriodicRanging(E_GduMountPosition position, 
+                                                    E_GduCameraManagerLaserRanging laserSwitch);
+
+/**
+ * @brief get laser period ranging data
+ * @param position: camera mounted position
+ * @param status: periodic ranging status
+ * @return Execution result.
+ */
+T_GduReturnCode GduCameraManager_GetLaserPeriodicRangingStatus(T_GduCameraManagerLaserDistanceInfo **status);
 
 /**
  * @brief Get camera connect status.

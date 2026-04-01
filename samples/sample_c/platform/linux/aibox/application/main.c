@@ -258,11 +258,12 @@ int main(int argc, char **argv)
 		USER_LOG_ERROR("set alias error");
 		return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
 	}
-
+	USER_LOG_DEBUG("-----------------------------");
 	returnCode = GduCore_ApplicationStart();
 	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
 		USER_LOG_ERROR("start sdk application error");
 	}
+	USER_LOG_DEBUG("-----------------------------");
 	if (aircraftInfoBaseInfo.mountPosition == GDU_MOUNT_POSITION_EXTENSION_PORT) {
 #if 0
 		returnCode = GduTest_DataTransmissionStartService();
@@ -400,7 +401,7 @@ int main(int argc, char **argv)
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Init camera manager failed, error code: 0x%08X\r\n", returnCode);
     }
-	returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SHOOT_BURST_PHOTO);
+	returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RADER_RANGING);
 	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
 		USER_LOG_ERROR("Payload collaboration sample init error\n");
 	}

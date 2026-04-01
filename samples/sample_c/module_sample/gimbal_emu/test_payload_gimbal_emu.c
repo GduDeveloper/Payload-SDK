@@ -393,13 +393,13 @@ static void *UserGimbal_Task(void *arg)
             goto out2;
         }
 
-        if (USER_UTIL_IS_WORK_TURN(step, 1, PAYLOAD_GIMBAL_TASK_FREQ)) {
-            USER_LOG_DEBUG("gimbal attitude: pitch %d, roll %d, yaw %d.", s_attitudeInformation.attitude.pitch,
-                           s_attitudeInformation.attitude.roll, s_attitudeInformation.attitude.yaw);
+        // if (USER_UTIL_IS_WORK_TURN(step, 1, PAYLOAD_GIMBAL_TASK_FREQ)) {
+        //     USER_LOG_DEBUG("gimbal attitude: pitch %d, roll %d, yaw %d.", s_attitudeInformation.attitude.pitch,
+        //                    s_attitudeInformation.attitude.roll, s_attitudeInformation.attitude.yaw);
 
-            USER_LOG_DEBUG("gimbal fine tune: pitch %d, roll %d, yaw %d.", s_systemState.fineTuneAngle.pitch,
-                           s_systemState.fineTuneAngle.roll, s_systemState.fineTuneAngle.yaw);
-        }
+        //     USER_LOG_DEBUG("gimbal fine tune: pitch %d, roll %d, yaw %d.", s_systemState.fineTuneAngle.pitch,
+        //                    s_systemState.fineTuneAngle.roll, s_systemState.fineTuneAngle.yaw);
+        // }
 
 #if 0
         // update aircraft attitude

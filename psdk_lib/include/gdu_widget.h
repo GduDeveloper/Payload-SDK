@@ -48,6 +48,7 @@ typedef enum {
     GDU_WIDGET_TYPE_SCALE = 3, /*!< scale widget type */
     GDU_WIDGET_TYPE_LIST = 4, /*!< list widget type */
     GDU_WIDGET_TYPE_INT_INPUT_BOX = 5, /*!< integer input box widget type */
+    GDU_WIDGET_TYPE_TEXT_INPUT_BOX = 6,
 } E_GduWidgetType;
 
 /**

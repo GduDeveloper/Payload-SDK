@@ -70,7 +70,6 @@ T_GduReturnCode GduGimbalManager_Init(void);
  */
 T_GduReturnCode GduGimbalManager_Deinit(void);
 
-
 /**
  * @brief move the gimbal to the specified coordinates .
  * @param mountPosition: unused
@@ -78,7 +77,6 @@ T_GduReturnCode GduGimbalManager_Deinit(void);
  * @return Execution result.
  */
 T_GduReturnCode GduGimbalManager_LookAt(E_GduMountPosition mountPosition, T_GduGimbalManagerLookAt info);
-
 /**
  * @brief Set the work mode of the gimbal.
  * @param mountPosition: gimbal mount position, input limit see enum E_GduMountPosition
@@ -99,7 +97,8 @@ T_GduReturnCode GduGimbalManager_Reset(E_GduMountPosition mountPosition, E_GduGi
  * @brief Rotate the angle of the gimbal.
  * @param mountPosition: gimbal mount position, input limit see enum E_GduMountPosition
  * @param rotation: the rotation parameters to be executed on the target gimbal, including the rotation mode, target
- * angle value and executed time, refer to T_GduGimbalManagerRotation
+ * angle value and executed time, refer to T_GduGimbalManagerRotation； if you use GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE mode, angle unit: 0.01 deg  
+ * if use GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE mode, angle unit: 1 deg
  * @return Execution result.
  */
 T_GduReturnCode GduGimbalManager_Rotate(E_GduMountPosition mountPosition, T_GduGimbalManagerRotation rotation);

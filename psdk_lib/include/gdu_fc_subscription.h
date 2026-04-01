@@ -697,7 +697,7 @@ typedef T_GduVector3f T_GduFcSubscriptionAccelerationBody;
 typedef T_GduVector3f T_GduFcSubscriptionAccelerationRaw;
 
 /**
- * @brief GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY topic data structure.
+ * @brief GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY topic data structure. cm/s
  */
 typedef struct Velocity {
     /*! Velocity of aircraft. */

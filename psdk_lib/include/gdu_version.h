@@ -37,7 +37,7 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 #define GDU_VERSION_MAJOR     3 /*!< GDU SDK major version num, when have incompatible API changes. Range from 0 to 99. */
 #define GDU_VERSION_MINOR     0 /*!< GDU SDK minor version num, when add functionality in a backwards compatible manner changes. Range from 0 to 99. */
-#define GDU_VERSION_BUILD     35 /*!< GDU SDK version*/
+#define GDU_VERSION_BUILD     36 /*!< GDU SDK version*/
 
 /* Exported types ------------------------------------------------------------*/
 

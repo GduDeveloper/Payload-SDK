@@ -38,7 +38,7 @@ extern "C" {
 #define EMERGENCY_STOP_MOTOR_MSG_MAX_LENGTH 10 /*!<  Max length of emergency stop motor message. */
 
 /* Exported types ------------------------------------------------------------*/
-typedef uint16_t E_GduFlightControllerGoHomeAltitude; /*!< range 2000~50000 表示20-500米范围   50020-51500 表示20-1500米范围 */
+typedef uint16_t E_GduFlightControllerGoHomeAltitude; /*!< Unit:meter, range 20~500 */
 
 /**
  * @brief The UAV's actions when rc is lost.
@@ -244,10 +244,10 @@ typedef struct {
 
 #pragma pack(1)
 typedef struct {
-    gdu_f32_t x;   /*!< Control with respect to the x axis. */
-    gdu_f32_t y;   /*!< Control with respect to the y axis.*/
-    gdu_f32_t z;   /*!< Control with respect to the z axis, up is positive.*/
-    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. range: (-PI，PI] */
+    gdu_f32_t x;   /*!< Control with respect to the x axis. unit:m/s rang:-20~20*/
+    gdu_f32_t y;   /*!< Control with respect to the y axis. unit:m/s rang:-20~20*/
+    gdu_f32_t z;   /*!< Control with respect to the z axis, up is positive. unit:m/s rang:-5~5*/
+    gdu_f32_t yaw; /*!< Yaw position/velocity control w.r.t. the ground frame. range: (-pI, PI]*/
 } T_GduFlightControllerJoystickCommand;// pack(1)
 
 typedef struct {
@@ -474,7 +474,7 @@ T_GduReturnCode GduFlightController_SetGoHomeAltitude(E_GduFlightControllerGoHom
 
 /**
  * @brief Get go home altitude.
- * @param altitude: go home altitude, unit: meter
+ * @param altitude: go home altitude, unit: meter range: 2000~50000（20m~500m） 50020~51500(20m~1500m)
  * @return Execution result.
  */
 T_GduReturnCode GduFlightController_GetGoHomeAltitude(E_GduFlightControllerGoHomeAltitude *altitude);
@@ -499,6 +499,12 @@ T_GduReturnCode GduFlightController_StartGoHome(void);
 T_GduReturnCode GduFlightController_CancelGoHome(void);
 
 /**
+ * @brief Set expected joystick mode before requesting joystick.
+ * @param joystickMode: include horizontal/vertical/yaw control mode, stable control mode.
+ */
+void GduFlightController_SetJoystickMode(T_GduFlightControllerJoystickMode joystickMode);
+
+/**
  * @brief Request execute joystick action.
  * @param joystickCommand: include x/y/z/yaw.
  * @return Execution result.
@@ -518,7 +524,6 @@ T_GduReturnCode GduFlightController_ExecuteEmergencyBrakeAction(void);
  * @return Execution result.
  */
 T_GduReturnCode GduFlightController_GetGeneralInfo(T_GduFlightControllerGeneralInfo *generalInfo);
-
 #ifdef __cplusplus
 }
 #endif

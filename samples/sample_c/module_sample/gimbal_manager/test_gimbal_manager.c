@@ -47,23 +47,18 @@ typedef struct {
 /* Private values -------------------------------------------------------------*/
 static const T_GduTestGimbalActionList s_rotationActionList[] =
 {
-        {.action = GDU_TEST_GIMBAL_RESET},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 30,  0,   0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, -30, 0,   0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, -30, 0,   0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 30,  0,   0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   30,  0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   -30, 0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   -30, 0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   30,  0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   0,   4,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   0,   -4, 0.2},
-        {.action = GDU_TEST_GIMBAL_RESET},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, 30,  0,   0,  0.2},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -90, 0,   0,  0.5},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -60, 0,   0,  0.5},
-        {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -30, 0,   0,  0.5},
-        {.action = GDU_TEST_GIMBAL_RESET},
+    //{.action = GDU_TEST_GIMBAL_RESET},
+      {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,  0,   1000,  0.2},
+      {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,  0,   1000,  0.2},
+          {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, 0,   30,  0,  0.2},
+          {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, 0,   -30, 0,  0.2},
+    //   {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   0,   1000,  0.2},
+      {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_RELATIVE_ANGLE, 0,   0,   1000,  0.2},
+     //{.action = GDU_TEST_GIMBAL_RESET},
+        // {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -90, 0,   0,  0.5},
+        // {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -60, 0,   0,  0.5},
+        // {.action = GDU_TEST_GIMBAL_ROTATION, .rotation.rotationMode = GDU_GIMBAL_ROTATION_MODE_ABSOLUTE_ANGLE, -30, 0,   0,  0.5},
+        // {.action = GDU_TEST_GIMBAL_RESET},
 };
 
 /* Private functions declaration ---------------------------------------------*/

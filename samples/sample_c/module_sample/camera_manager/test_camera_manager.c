@@ -34,6 +34,8 @@
 #define TEST_CAMERA_MANAGER_MEDIA_FILE_NAME_MAX_SIZE             32
 #define TEST_CAMERA_MANAGER_MEDIA_EXTEND_INFO_MAX_SIZE           128
 
+#define CAMERA_MANAGER_TASK_FREQ         (1)
+#define CAMERA_MANAGER_TASK_STACK_SIZE   (2048)
 /* Private types -------------------------------------------------------------*/
 typedef struct {
     E_GduCameraType cameraType;
@@ -43,12 +45,26 @@ typedef struct {
 /* Private values -------------------------------------------------------------*/
 static const T_GduTestCameraTypeStr s_cameraTypeStrList[] = {
     {GDU_CAMERA_TYPE_UNKNOWN, "Unknown"},
-    {GDU_CAMERA_TYPE_PSDK,    "GDU Payload"},
+    {GDU_CAMERA_TYPE_8K,    "8K camera"},
+    {GDU_CAMERA_TYPE_8KC,    "8KC camera"},
+    {GDU_CAMERA_TYPE_30X,    "30X camera"},
+    {GDU_CAMERA_TYPE_PFL_ONE,    "PFL_ONE camera"},
+    {GDU_CAMERA_TYPE_PDL_300G,    "PDL_300G camera"},
+    {GDU_CAMERA_TYPE_PDL_1K ,    "PDL_1K camera"},
+    {GDU_CAMERA_TYPE_PQL_02 ,    "PQL_02 camera"},
+    {GDU_CAMERA_TYPE_SX_DL,    "SX Dual-lens  camera"},
+    {GDU_CAMERA_TYPE_SX_TL,    "SX Triple-lens camera"},
+    {GDU_CAMERA_TYPE_SX_FL,    "SX Quad-lens camera"},
+    {GDU_CAMERA_TYPE_GD_FL,    "GD Quad-lens camera"},
+    {GDU_CAMERA_TYPE_GD_1K_FL,    "GD_1K Quad-lens camera"},
+    {GDU_CAMERA_TYPE_GD_DL,    "GD Dual-lens camera"},
+    {GDU_CAMERA_TYPE_GD_TL,    "GD Triple-lens camera"},
+    {GDU_CAMERA_TYPE_PSDK,    "psdk camera"},
 };
 
 static FILE *s_downloadMediaFile = NULL;
 static T_GduCameraManagerFileList s_meidaFileList;
-
+static T_GduTaskHandle s_userCameraManagerThread;
 /* Private functions declaration ---------------------------------------------*/
 static uint8_t GduTest_CameraManagerGetCameraTypeIndex(E_GduCameraType cameraType);
 static T_GduReturnCode GduTest_CameraManagerMediaDownloadAndDeleteMediaFile(E_GduMountPosition position);
@@ -335,16 +351,16 @@ T_GduReturnCode GduTest_CameraManagerSetTapZoomPoint(E_GduMountPosition position
         return returnCode;
     }
 
-    /*!< set camera tap zoom multiplier parameter */
-    USER_LOG_INFO("Set mounted position %d camera's tap zoom multiplier to %d x.",
-                  position, multiplier);
-    returnCode = GduCameraManager_SetTapZoomMultiplier(position, multiplier);
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
-        returnCode != GDU_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
-        USER_LOG_ERROR("Set mounted position %d camera's tap zoom multiplier(%d) failed,"
-                       " error code :0x%08X.", position, multiplier, returnCode);
-        return returnCode;
-    }
+    // /*!< set camera tap zoom multiplier parameter */
+    // USER_LOG_INFO("Set mounted position %d camera's tap zoom multiplier to %d x.",
+    //               position, multiplier);
+    // returnCode = GduCameraManager_SetTapZoomMultiplier(position, multiplier);
+    // if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS &&
+    //     returnCode != GDU_ERROR_CAMERA_MANAGER_MODULE_CODE_UNSUPPORTED_COMMAND) {
+    //     USER_LOG_ERROR("Set mounted position %d camera's tap zoom multiplier(%d) failed,"
+    //                    " error code :0x%08X.", position, multiplier, returnCode);
+    //     return returnCode;
+    // }
 
     USER_LOG_INFO("Set mounted position %d camera's tap zoom point to (%f, %f).",
                   position, tapZoomPosData.focusX, tapZoomPosData.focusY);
@@ -558,7 +574,20 @@ T_GduReturnCode GduTest_CameraManagerStartShootBurstPhoto(E_GduMountPosition pos
         USER_LOG_ERROR("Mounted position %d camera shoot photo failed, "
                        "error code :0x%08X.", position, returnCode);
     }
-
+    USER_LOG_INFO("Sleep 0.5s...");
+    osalHandler->TaskSleepMs(500);
+    returnCode = GduCameraManager_StartShootPhoto(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_BURST);
+    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Mounted position %d camera shoot photo failed, "
+                       "error code :0x%08X.", position, returnCode);
+    }
+    USER_LOG_INFO("Sleep 0.5s...");
+    osalHandler->TaskSleepMs(500);
+    returnCode = GduCameraManager_StartShootPhoto(position, GDU_CAMERA_MANAGER_SHOOT_PHOTO_MODE_BURST);
+    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Mounted position %d camera shoot photo failed, "
+                       "error code :0x%08X.", position, returnCode);
+    }
     return returnCode;
 }
 
@@ -769,6 +798,23 @@ T_GduReturnCode GduTest_CameraManagerStopRecordVideo(E_GduMountPosition position
     return returnCode;
 }
 
+static void *camera_manager_Task(void *arg)
+{
+    T_GduReturnCode gduStat;
+    T_GduCameraManagerLaserDistanceInfo *status = NULL;
+    T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
+
+    USER_UTIL_UNUSED(arg);
+    GduCameraManager_GetLaserPeriodicRangingStatus(&status);
+    while (1) {
+        osalHandler->TaskSleepMs(1000 / CAMERA_MANAGER_TASK_FREQ);
+
+        USER_LOG_DEBUG("get laser periodic ranging ack:%d distance:%d, longitude:%d, latitude:%d, relative_H:%d, sea_H:%d, Horizontal_distance:%d", \
+		status->ack, status->distance, status->longitude, status->latitude, status->relative_H, status->sea_H, status->Horizontal_distance);
+
+    }
+}
+
 T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
                                                E_GduTestCameraManagerSampleSelect cameraManagerSampleSelect)
 {
@@ -909,14 +955,13 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
             USER_LOG_INFO("--> Function f: Set camera tap zoom point from (5x, 0.3m, 0.3m) to (4x, 0.8m, 0.7m)");
             GduTest_WidgetLogAppend(
                 "--> Function f: Set camera tap zoom point from (5x, 0.3m, 0.3m) to (4x, 0.8m, 0.7m)");
-            tapZoomPosData.focusX = 0.3f;
-            tapZoomPosData.focusY = 0.3f;
+            tapZoomPosData.focusX = 0.1f;
+            tapZoomPosData.focusY = 0.5f;
             returnCode = GduTest_CameraManagerSetTapZoomPoint(mountPosition, 1, tapZoomPosData);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's tap zoom point(5, 0.3m,0.3m) failed,"
                                "error code: 0x%08X\r\n", mountPosition, returnCode);
             }
-
             USER_LOG_INFO("Sleep 5s...");
             {
                 int i = 0;
@@ -930,8 +975,8 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
             }
             
 
-            tapZoomPosData.focusX = 0.8f;
-            tapZoomPosData.focusY = 0.7f;
+            tapZoomPosData.focusX = 0.9f;
+            tapZoomPosData.focusY = 0.5f;
             returnCode = GduTest_CameraManagerSetTapZoomPoint(mountPosition, 4, tapZoomPosData);
             if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
                 USER_LOG_ERROR("Set mounted position %d camera's tap zoom point(4, 0.8m,0.7m) failed,"
@@ -1077,10 +1122,29 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
             USER_LOG_WARN("This feature does not support RTOS platform.");
 #endif
             break;
+        case E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RADER_RANGING: {
+            USER_LOG_INFO("--> Function K: laser ranging");
+            GduTest_WidgetLogAppend("--> Function K: laser ranging");
+
+            returnCode = GduCameraManager_laserPeriodicRanging(mountPosition,
+                                                                   GDU_CAMERA_MANAGER_LASER_RANGING_ENABLE);
+            if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera enable laser ranging failed,"
+                               "error code: 0x%08X\r\n", mountPosition, returnCode);
+            }
+            break;
+        }
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
         }
+    }
+
+    if (osalHandler->TaskCreate("camera_manager_task", camera_manager_Task,
+                                CAMERA_MANAGER_TASK_STACK_SIZE, NULL, &s_userCameraManagerThread) !=
+        GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("user camera manager task create error.");
+        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
     }
 
     USER_LOG_INFO("Camera manager sample end");
