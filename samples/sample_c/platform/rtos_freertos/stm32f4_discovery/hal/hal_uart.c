@@ -31,7 +31,7 @@
 #include "gdu_platform.h"
 
 /* Private constants ---------------------------------------------------------*/
-#define COMMUNICATION_UART_NUM          UART_NUM_3
+#define COMMUNICATION_UART_NUM          UART_NUM_2
 
 /* Private types -------------------------------------------------------------*/
 typedef enum {

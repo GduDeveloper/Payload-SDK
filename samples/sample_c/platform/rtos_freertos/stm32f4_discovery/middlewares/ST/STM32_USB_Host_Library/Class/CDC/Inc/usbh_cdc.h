@@ -51,7 +51,7 @@ extern "C" {
 
 /*Communication Class codes*/
 #define USB_CDC_CLASS                                           0x02U
-#define DJI_CDC_CLASS                                           0xE0U
+#define GDU_CDC_CLASS                                           0xE0U
 #define COMMUNICATION_INTERFACE_CLASS_CODE                      0x02U
 
 /*Data Interface Class Codes*/

@@ -46,7 +46,7 @@ typedef enum {
      * @note This transfer type only support linux platform and use network port. Users need to deploy FTP service on
      * payload. The ftp user info used to transfer upgrade firmware is :
      * username:gdu_payload_ftp
-     * password:DJi_#$31
+     * password:
      * You can get guide about FTP service deployment on https://developer.gdu.com/payload-sdk/documentation
      */
     GDU_FIRMWARE_TRANSFER_TYPE_UART = 0,
@@ -74,7 +74,7 @@ typedef struct {
     uint8_t minorVersion; /*!< The minor version of firmware, the range is 0 ~ 99. */
     uint8_t modifyVersion; /*!< The modify version of firmware, the range is 0 ~ 99. */
     uint8_t debugVersion; /*!< The debug version of firmware, the range is 0 ~ 99. */
-} T_GduFirmwareVersion;
+} T_GduVersion;
 
 typedef struct {
     uint8_t upgradeProgress; /*!< The upgrade progress, the range is 0 ~ 100. */
@@ -143,7 +143,7 @@ typedef struct {
 } T_GduUpgradeState;
 
 typedef struct {
-    T_GduFirmwareVersion currentFirmwareVersion; /*!< The current firmware version of payload. */
+    T_GduVersion currentFirmwareVersion; /*!< The current firmware version of payload. */
     T_GduFirmwareTransferInfo firmwareTransferInfo; /*!< The firmware transfer info of payload. */
 } T_GduUpgradeConfig;
 

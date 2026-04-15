@@ -166,6 +166,13 @@ typedef struct {
 } T_GduCameraSDCardState;
 
 /**
+ * @brief photo storage param.
+ */
+typedef struct {
+    uint8_t storeDir[64]; /*!< photo storage directory. */
+} T_GduCameraStoreParam;
+
+/**
  * @brief Camera metering target when in spot metering mode.
  */
 typedef struct {
@@ -345,6 +352,14 @@ typedef struct {
      * @return Execution result.
      */
     T_GduReturnCode (*FormatSDCard)(void);
+
+
+    /**
+     * @brief Prototype of callback function used to format the SDCard inserted.
+     * @return Execution result.
+     */
+    T_GduReturnCode (*setPhotoStorageParam)(T_GduCameraStoreParam param);
+
 } T_GduCameraCommonHandler;
 
 /**
@@ -520,6 +535,7 @@ typedef struct {
      * @return Execution result.
      */
     T_GduReturnCode (*StopContinuousOpticalZoom)(void);
+	//T_GduReturnCode (*StopContinuousOpticalZoom)(E_GduCameraZoomDirection direction, E_GduCameraZoomSpeed speed);
 } T_GduCameraOpticalZoomHandler;
 
 /**

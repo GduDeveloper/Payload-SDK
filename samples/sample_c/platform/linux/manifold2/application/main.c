@@ -51,10 +51,15 @@
 #include "gdu_sdk_app_info.h"
 #include "gdu_aircraft_info.h"
 #include "widget/test_widget.h"
+#include "widget/test_widget_speaker.h"
 //#include "widget_interaction_test/test_widget_interaction.h"
-//#include "data_transmission/test_data_transmission.h"
+#include "data_transmission/test_data_transmission.h"
+#include <camera_manager/test_camera_manager.h>
 #include "gdu_sdk_config.h"
-
+#include "waypoint_v3/test_waypoint_v3.h"
+#include "payload_msg/test_payload_msg.h"
+#include "gdu_power_management.h"
+#include "power_management/test_power_management.h"
 /* Private constants ---------------------------------------------------------*/
 #define GDU_LOG_PATH                    "Logs/GDU"
 #define GDU_LOG_INDEX_FILE_NAME         "Logs/latest"
@@ -85,7 +90,7 @@ static T_GduReturnCode GduUser_LocalWrite(const uint8_t *data, uint16_t dataLen)
 static T_GduReturnCode GduUser_LocalWriteFsInit(const char *path);
 static void *GduUser_MonitorTask(void *argument);
 static T_GduReturnCode GduTest_HighPowerApplyPinInit();
-//static T_GduReturnCode GduTest_WriteHighPowerApplyPin(E_GduPowerManagementPinState pinState);
+static T_GduReturnCode GduTest_WriteHighPowerApplyPin(E_GduPowerManagementPinState pinState);
 
 /* Exported functions definition ---------------------------------------------*/
 int main(int argc, char **argv)
@@ -110,13 +115,13 @@ int main(int argc, char **argv)
 		.Free = Osal_Free,
 		.GetTimeMs = Osal_GetTimeMs,
 		.GetTimeUs = Osal_GetTimeUs,
-		.GetIPAddr = Osal_GetTimeUs,
+		//.GetIPAddr = Osal_GetIpAddr,
 
 	};
 	T_GduLoggerConsole printConsole = {
 		.func = GduUser_PrintConsole,
-		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
-		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
+		//.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_INFO,
+		.consoleLevel = GDU_LOGGER_CONSOLE_LOG_LEVEL_DEBUG,
 		.isSupportColor = true,
 	};
 
@@ -253,7 +258,12 @@ int main(int argc, char **argv)
 		USER_LOG_ERROR("set alias error");
 		return GDU_ERROR_SYSTEM_MODULE_CODE_SYSTEM_ERROR;
 	}
-
+	USER_LOG_DEBUG("-----------------------------");
+	returnCode = GduCore_ApplicationStart();
+	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+		USER_LOG_ERROR("start sdk application error");
+	}
+	USER_LOG_DEBUG("-----------------------------");
 	if (aircraftInfoBaseInfo.mountPosition == GDU_MOUNT_POSITION_EXTENSION_PORT) {
 #if 0
 		returnCode = GduTest_DataTransmissionStartService();
@@ -267,6 +277,13 @@ int main(int argc, char **argv)
 		}
 #endif
 	} else {
+#ifdef CONFIG_MODULE_PAYLOAD_MSG_ON
+		returnCode = GduTest_PayloadMsgStartService();
+		if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("payload msg error");
+		}
+#endif
+
 #ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
 		T_GduTestApplyHighPowerHandler applyHighPowerHandler = {
 			.pinInit = GduTest_HighPowerApplyPinInit,
@@ -327,6 +344,16 @@ int main(int argc, char **argv)
 		}
 #endif
 
+#ifdef CONFIG_MODULE_SAMPLE_FLIGHT_CTRL_ON
+		if (GduFlightController_Init() != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("psdk flight controller init error");
+		}
+		else
+		{
+			USER_LOG_ERROR("888");
+		}
+#endif
+
 #ifdef CONFIG_MODULE_SAMPLE_WIDGET_ON
 #if GDU_USE_WIDGET_INTERACTION
 		returnCode = GduTest_WidgetInteractionStartService();
@@ -339,6 +366,13 @@ int main(int argc, char **argv)
 			USER_LOG_ERROR("widget sample init error");
 		}
 #endif
+#endif
+
+#ifdef CONFIG_MODULE_SAMPLE_WIDGET_SPEAKER_ON
+		returnCode = GduTest_WidgetSpeakerStartService();
+		if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("widget speaker test init error");
+		}
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_DATA_TRANSMISSION_ON
@@ -361,6 +395,25 @@ int main(int argc, char **argv)
 			USER_LOG_ERROR("Payload collaboration sample init error\n");
 		}
 #endif
+
+ #ifdef CONFIG_MODULE_SAMPLE_CAMERA_MANAGER_ON
+	returnCode = GduCameraManager_Init();
+    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+        USER_LOG_ERROR("Init camera manager failed, error code: 0x%08X\r\n", returnCode);
+    }
+	returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RADER_RANGING);
+	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+		USER_LOG_ERROR("Payload collaboration sample init error\n");
+	}
+
+	// returnCode = GduTest_CameraManagerRunSample(0, E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_RECORD_VIDEO);
+	// if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+	// 	USER_LOG_ERROR("Payload collaboration sample init error\n");
+	// }
+
+	
+	// GduTest_GimbalManagerRunSample(0, GDU_GIMBAL_MODE_FREE);
+ #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_UPGRADE_ON
 		T_GduTestUpgradePlatformOpt linuxUpgradePlatformOpt = {
@@ -385,11 +438,6 @@ int main(int argc, char **argv)
 			USER_LOG_ERROR("psdk upgrade init error");
 		}
 #endif
-	}
-
-	returnCode = GduCore_ApplicationStart();
-	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-		USER_LOG_ERROR("start sdk application error");
 	}
 
 #if 0
@@ -613,13 +661,11 @@ static T_GduReturnCode GduTest_HighPowerApplyPinInit()
 	return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
 
-#if 0
 static T_GduReturnCode GduTest_WriteHighPowerApplyPin(E_GduPowerManagementPinState pinState)
 {
 	//attention: please pull up the HWPR pin state by hardware.
 	return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
-#endif
 
 #pragma GCC diagnostic pop
 

@@ -89,6 +89,19 @@ T_GduReturnCode GduPowerManagement_ApplyHighPowerSync(void);
  */
 T_GduReturnCode GduPowerManagement_RegWriteHighPowerApplyPinCallback(GduWriteHighPowerApplyPinCallback callback);
 
+/**
+ * @brief Register callback function used to notify payload that the aircraft will power off soon and get state
+ * whether the payload is ready to power off or not.
+ * @details After registering, the callback function will be called at a fixed frequency when aircraft will power off.
+ * User fill in the power off preparation flag, and once the payload is ready to power off, the callback function will not
+ * be called. After a specified time, if the payload is not ready to power off, the aircraft will power off immediately. The
+ * specified time is 3s.
+ * @param callback: pointer to callback function used to notify aircraft power off message and get payload power off
+ * preparation flag.
+ * @return Execution result.
+ */
+T_GduReturnCode GduPowerManagement_RegPowerOffNotificationCallback(GduPowerOffNotificationCallback callback);
+
 #ifdef __cplusplus
 }
 #endif

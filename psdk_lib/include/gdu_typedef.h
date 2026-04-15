@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "gdu_error.h"
-
+//#include "gdu_payload_camera.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -88,31 +88,58 @@ typedef enum {
 
 typedef enum {
     GDU_AIRCRAFT_SERIES_UNKNOWN = 0,
-    GDU_AIRCRAFT_SERIES_M200_V2 = 1,
-    GDU_AIRCRAFT_SERIES_M300 = 2,
+    GDU_AIRCRAFT_SERIES_S200_V1 = 1,
+    GDU_AIRCRAFT_SERIES_S400 = 2,
 } E_GduAircraftSeries;
 
 typedef enum {
     GDU_AIRCRAFT_TYPE_UNKNOWN = 0, /*!< Aircraft type is unknown. */
-    GDU_AIRCRAFT_TYPE_M200_V2 = 44, /*!< Aircraft type is Matrice 200 V2. */
-    GDU_AIRCRAFT_TYPE_M210_V2 = 45, /*!< Aircraft type is Matrice 220 V2. */
-    GDU_AIRCRAFT_TYPE_M210RTK_V2 = 46, /*!< Aircraft type is Matrice 210 RTK V2. */
-    GDU_AIRCRAFT_TYPE_M300_RTK = 60, /*!< Aircraft type is Matrice 300 RTK. */
+	GDU_AIRCRAFT_TYPE_S100 = 1, 
+    GDU_AIRCRAFT_TYPE_W300 = 2, 
+    GDU_AIRCRAFT_TYPE_600 = 3,
+    GDU_AIRCRAFT_TYPE_S400 = 4, 
+    GDU_AIRCRAFT_TYPE_S700 = 5,
+	GDU_AIRCRAFT_TYPE_S220 = 6,
+	GDU_AIRCRAFT_TYPE_S450 = 7, 
+    GDU_AIRCRAFT_TYPE_S480 = 8, 
+    GDU_AIRCRAFT_TYPE_S200 = 9,
+    GDU_AIRCRAFT_TYPE_S220PRO = 10, 
+    GDU_AIRCRAFT_TYPE_S280 = 11,
+	GDU_AIRCRAFT_TYPE_S220PRO_SX640 = 12,
+    GDU_AIRCRAFT_TYPE_S220PRO_GDU640 = 13, 
+    GDU_AIRCRAFT_TYPE_S220_BD = 14,
+    GDU_AIRCRAFT_TYPE_S200_BD = 15, 
+    GDU_AIRCRAFT_TYPE_S280_BD = 16,
+	GDU_AIRCRAFT_TYPE_S220PRO_BD = 17,
+	GDU_AIRCRAFT_TYPE_S220PRO_SX_BD = 18, 
+    GDU_AIRCRAFT_TYPE_S220PRO_GDU_BD = 19, 
+    GDU_AIRCRAFT_TYPE_S220_DL = 20,
+    GDU_AIRCRAFT_TYPE_S220_TL = 21, 
+    GDU_AIRCRAFT_TYPE_S220_DL_BD = 22,
+	GDU_AIRCRAFT_TYPE_S220_TL_BD = 23,
+    GDU_AIRCRAFT_TYPE_S220_GDU_TL = 24,
+	GDU_AIRCRAFT_TYPE_S220_FL_BD= 25,
 } E_GduAircraftType;
-
 /**
  * @brief Camera type.
  */
 typedef enum {
     GDU_CAMERA_TYPE_UNKNOWN = 0, /*!< Camera type is unknown. */
-    GDU_CAMERA_TYPE_Z30 = 20, /*!< Camera type is Z30. */
-    GDU_CAMERA_TYPE_XT2 = 26, /*!< Camera type is XT2. */
+	GDU_CAMERA_TYPE_8K = 1,
+	GDU_CAMERA_TYPE_8KC = 2,
+	GDU_CAMERA_TYPE_30X = 3,
+	GDU_CAMERA_TYPE_PFL_ONE = 4,
+	GDU_CAMERA_TYPE_PDL_300G = 5,
+	GDU_CAMERA_TYPE_PDL_1K = 6,
+	GDU_CAMERA_TYPE_PQL_02 = 7,
+    GDU_CAMERA_TYPE_SX_DL = 8,
+    GDU_CAMERA_TYPE_SX_TL = 9,
+    GDU_CAMERA_TYPE_SX_FL = 10,
+    GDU_CAMERA_TYPE_GD_FL = 11,
+    GDU_CAMERA_TYPE_GD_1K_FL = 12,
+    GDU_CAMERA_TYPE_GD_DL = 13,
+    GDU_CAMERA_TYPE_GD_TL = 14,
     GDU_CAMERA_TYPE_PSDK = 31, /*!< Camera type is third party camera based on Payload SDK. */
-    GDU_CAMERA_TYPE_XTS = 41, /*!< Camera type is XT S. */
-    GDU_CAMERA_TYPE_H20 = 42, /*!< Camera type is H20. */
-    GDU_CAMERA_TYPE_H20T = 43, /*!< Camera type is H20T. */
-    GDU_CAMERA_TYPE_P1 = 50, /*!< Camera type is P1. */
-    GDU_CAMERA_TYPE_L1, /*!< Camera type is L1. */
 } E_GduCameraType;
 
 /**
@@ -151,6 +178,8 @@ typedef enum {
     GDU_MOBILE_APP_LANGUAGE_CHINESE = 1, /*!< The system language of the mobile app is Chinese */
     GDU_MOBILE_APP_LANGUAGE_JAPANESE = 2, /*!< The system language of the mobile app is Japanese */
     GDU_MOBILE_APP_LANGUAGE_FRENCH = 3, /*!< The system language of the mobile app is French */
+    GDU_MOBILE_APP_LANGUAGE_RUSSIAN = 4, /*!< The system language of the mobile app is russian */
+    GDU_MOBILE_APP_LANGUAGE_MAX
 } E_GduMobileAppLanguage;
 
 /**
@@ -198,12 +227,8 @@ typedef enum {
 
 typedef enum {
     GDU_CHANNEL_ADDRESS_UNKNOWN = 0,
-    GDU_CHANNEL_ADDRESS_PAYLOAD_PORT_NO1,
-    GDU_CHANNEL_ADDRESS_PAYLOAD_PORT_NO2,
-    GDU_CHANNEL_ADDRESS_PAYLOAD_PORT_NO3,
-    GDU_CHANNEL_ADDRESS_EXTENSION_PORT,
-    GDU_CHANNEL_ADDRESS_MASTER_RC_APP,
-    GDU_CHANNEL_ADDRESS_SLAVE_RC_APP,
+    GDU_CHANNEL_ADDRESS_PAYLOAD_COMPUTER = 1,
+    GDU_CHANNEL_ADDRESS_MASTER_RC_APP = 2,
 } E_GduChannelAddress;
 
 /**
@@ -295,7 +320,6 @@ typedef struct {
      * normal, this state will be clear again. */
     bool busyState;
 } T_GduDataChannelState;
-
 typedef struct Vector3d {
     int32_t x; /*!< Specifies int32 value of x for vector. */
     int32_t y; /*!< Specifies int32 value of y for vector. */

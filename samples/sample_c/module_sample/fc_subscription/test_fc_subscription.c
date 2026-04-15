@@ -340,12 +340,8 @@ static T_GduReturnCode GduTest_FcSubscriptionReceiveQuaternionCallback(const uin
 
     if (s_userFcSubscriptionDataShow == true) {
         USER_LOG_INFO("receive quaternion data.");
-
-        USER_LOG_INFO("timestamp: millisecond %u microsecond %u.", timestamp->millisecond,
-                      timestamp->microsecond);
         USER_LOG_INFO("quaternion: %f %f %f %f.\r\n", quaternion->q0, quaternion->q1, quaternion->q2, quaternion->q3);
         USER_LOG_INFO("euler angles: pitch = %.2f roll = %.2f yaw = %.2f.", pitch, yaw, roll);
-        //GduTest_WidgetLogAppend("pitch = %.2f roll = %.2f yaw = %.2f.", pitch, yaw, roll);
     }
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;

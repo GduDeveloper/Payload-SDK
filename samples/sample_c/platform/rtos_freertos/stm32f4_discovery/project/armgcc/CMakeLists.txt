@@ -82,6 +82,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../psdk_lib/lib)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink/glink_m)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink/glink_np)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../../../../../glink_ftp)
 
 file(GLOB_RECURSE LIB_SRC ../../../../../../../psdk_lib/lib/*.c)
 #message(STATUS "src2 *****************${LIB_SRC}")
@@ -96,6 +97,7 @@ include_directories(../../application)
 message("-- Use payload sdk package")
 file(GLOB_RECURSE MODULE_SAMPLE_SRC
 		../../../../../module_sample/camera_emu/test_payload_cam_emu_base.c
+        ../../../../../module_sample/gimbal_manager/*.c
         ../../../../../module_sample/gimbal_emu/*.c
         ../../../../../module_sample/fc_subscription/*.c
         ../../../../../module_sample/time_sync/*.c

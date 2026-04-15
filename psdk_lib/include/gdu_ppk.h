@@ -35,6 +35,14 @@ typedef enum {
     GDU_PPK_EVENT_PIN_STATE_SET = 1, /*!< Specifies pin is in high level state. */
 } E_GduPPKEventPinState;
 
+
+typedef enum{
+	PPK_TO_PSDK = 1, //ppk数据发给PSDK
+	PPK_TO_AIRCRAFT, //ppk数据发个飞机
+	PPK_TO_PSDK_AIRCRAFT,//ppk 数据发给psdk和飞机
+}E_GduPPK_Switch;
+
+
 /**
  * @brief ppk handler.
  */
@@ -47,7 +55,7 @@ typedef struct {
      * @param 
      * @return 
      */
-
+    E_GduPPK_Switch SwitchType;
     T_GduReturnCode (*EventPinInit)(void);
     T_GduReturnCode (*EventTrigger)(E_GduPPKEventPinState pinState);
 } T_GduPPKHandlerList;
@@ -72,6 +80,10 @@ T_GduReturnCode GduPPK_GetQianXunEventData(
 		uint16_t exposure_id, 
 		T_GduTimeSyncAircraftTime *aircraftTime,
 		char *out_event_str);
+
+T_GduReturnCode GduPPK_GetRawDataCount(uint32_t *rawDataCount);
+
+
 #ifdef __cplusplus
 }
 #endif

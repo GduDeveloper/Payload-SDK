@@ -167,6 +167,7 @@ static T_GduReturnCode GduMediaFile_CreateTempFilePriv_JPG(const char *srcFilePa
 
     jpgTempFilePriv = *pTempFilePrivHandle;
 
+#if 1
     //get temp file name
     strcpy(jpgTempFilePriv->tempfilePath, JPG_TEMP_FILE_TEMPLATE_STR);
     tempFd = mkstemps(jpgTempFilePriv->tempfilePath, strlen(JPG_FILE_SUFFIX));
@@ -177,6 +178,7 @@ static T_GduReturnCode GduMediaFile_CreateTempFilePriv_JPG(const char *srcFilePa
     }
     close(tempFd);
     unlink(jpgTempFilePriv->tempfilePath);
+#endif
 
     //ffmpeg cmd send
     snprintf(ffmpeg_cmd, FFMPEG_CMD_BUF_SIZE, "ffmpeg -i \"%s\" -vf %s %s 1>/dev/null 2>&1",

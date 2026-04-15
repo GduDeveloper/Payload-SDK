@@ -60,6 +60,7 @@ static const T_GduWidgetHandlerListItem s_widgetHandlerList[] = {
     {7, GDU_WIDGET_TYPE_INT_INPUT_BOX, GduTestWidget_SetWidgetValue, GduTestWidget_GetWidgetValue, NULL},
     {8, GDU_WIDGET_TYPE_SWITCH,        GduTestWidget_SetWidgetValue, GduTestWidget_GetWidgetValue, NULL},
     {9, GDU_WIDGET_TYPE_LIST,          GduTestWidget_SetWidgetValue, GduTestWidget_GetWidgetValue, NULL},
+    {10, GDU_WIDGET_TYPE_TEXT_INPUT_BOX,          GduTestWidget_SetWidgetValue, GduTestWidget_GetWidgetValue, NULL},
 };
 
 static char *s_widgetTypeNameArray[] = {
@@ -68,7 +69,8 @@ static char *s_widgetTypeNameArray[] = {
     "Switch",
     "Scale",
     "List",
-    "Int input box"
+    "Int input box",
+    "Text input box"
 };
 
 static const uint32_t s_widgetHandlerListCount = sizeof(s_widgetHandlerList) / sizeof(T_GduWidgetHandlerListItem);
@@ -86,7 +88,7 @@ T_GduReturnCode GduTest_WidgetStartService(void)
         USER_LOG_ERROR("Gdu test widget init error, stat = 0x%08llX", gduStat);
         return gduStat;
     }
-
+    
 #ifdef SYSTEM_ARCH_LINUX
     //Step 2 : Set UI Config (Linux environment)
     char curFileDirPath[WIDGET_DIR_PATH_LEN_MAX];
@@ -141,20 +143,24 @@ T_GduReturnCode GduTest_WidgetStartService(void)
     };
 
     //set default ui config
-    gduStat = GduWidget_RegDefaultUiConfigByBinaryArray(&enWidgetBinaryArrayConfig);
+    // gduStat = GduWidget_RegDefaultUiConfigByBinaryArray(&enWidgetBinaryArrayConfig);
+    // if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+    //     USER_LOG_ERROR("Add default widget ui config error, stat = 0x%08llX", gduStat);
+    //     return gduStat;
+    // }
+    gduStat = GduWidget_RegUiConfigByBinaryArray(GDU_MOBILE_APP_LANGUAGE_ENGLISH, GDU_MOBILE_APP_SCREEN_TYPE_LITTLE_SCREEN, &enWidgetBinaryArrayConfig);
     if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Add default widget ui config error, stat = 0x%08llX", gduStat);
+        USER_LOG_ERROR("Add widget ui config error, stat = 0x%08llX", gduStat);
         return gduStat;
     }
+
 #endif
-#if 1
     //Step 3 : Set widget handler list
     gduStat = GduWidget_RegHandlerList(s_widgetHandlerList, s_widgetHandlerListCount);
     if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Set widget handler list error, stat = 0x%08llX", gduStat);
         return gduStat;
     }
-    #endif
 
     //Step 4 : Run widget api sample task
     if (osalHandler->TaskCreate("user_widget_task", GduTest_WidgetTask, WIDGET_TASK_STACK_SIZE, NULL,
@@ -226,6 +232,9 @@ static T_GduReturnCode GduTestWidget_SetWidgetValue(E_GduWidgetType widgetType, 
     USER_LOG_INFO("Set widget value, widgetType = %s, widgetIndex = %d ,widgetValue = %d",
                   s_widgetTypeNameArray[widgetType], index, value);
     s_widgetValueList[index] = value;
+
+    if(userData != NULL)
+        USER_LOG_INFO("userdata:%s", userData);
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }

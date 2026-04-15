@@ -39,7 +39,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct {
-    T_GduFirmwareVersion firmwareVersion;
+    T_GduVersion firmwareVersion;
     E_GduFirmwareTransferType transferType;
     //For linux: need replace program before reboot system
     //For mcu: don't need replace program before reboot system, replace program in loader

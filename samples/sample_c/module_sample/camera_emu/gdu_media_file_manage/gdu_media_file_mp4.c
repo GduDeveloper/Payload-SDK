@@ -201,6 +201,7 @@ static T_GduReturnCode GduMediaFile_CreateTempPicPriv_MP4(const char *srcFilePat
 
     mp4TempPicFile = *pTempPicPrivHandle;
 
+#if 1
     //get temp file name
     strcpy(mp4TempPicFile->tempfilePath, MP4_TEMP_FILE_TEMPLATE_STR);
     tempFd = mkstemps(mp4TempPicFile->tempfilePath, strlen(MP4_FILE_SUFFIX));
@@ -211,6 +212,7 @@ static T_GduReturnCode GduMediaFile_CreateTempPicPriv_MP4(const char *srcFilePat
     }
     close(tempFd);
     unlink(mp4TempPicFile->tempfilePath);
+#endif
 
     //ffmpeg cmd send
     snprintf(ffmpeg_cmd, FFMPEG_CMD_BUF_SIZE, "ffmpeg -i \"%s\" -vf %s -ss 00:00:00 -vframes 1 %s 1>/dev/null 2>&1",

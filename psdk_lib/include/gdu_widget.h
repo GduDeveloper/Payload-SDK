@@ -48,6 +48,7 @@ typedef enum {
     GDU_WIDGET_TYPE_SCALE = 3, /*!< scale widget type */
     GDU_WIDGET_TYPE_LIST = 4, /*!< list widget type */
     GDU_WIDGET_TYPE_INT_INPUT_BOX = 5, /*!< integer input box widget type */
+    GDU_WIDGET_TYPE_TEXT_INPUT_BOX = 6,
 } E_GduWidgetType;
 
 /**
@@ -65,6 +66,77 @@ typedef enum {
     GDU_WIDGET_SWITCH_STATE_OFF = 0, /*!< Switch is turned off */
     GDU_WIDGET_SWITCH_STATE_ON = 1 /*!< Switch is turned on */
 } E_GduWidgetSwitchState;
+
+/**
+ * @brief Switch widget speaker work mode.
+ */
+typedef enum {
+    GDU_WIDGET_SPEAKER_WORK_MODE_TTS = 0,
+    GDU_WIDGET_SPEAKER_WORK_MODE_VOICE = 1,
+	GDU_WIDGET_SPEAKER_WORK_MODE_REAL_TIME_VOICE = 2,
+} E_GduWidgetSpeakerWorkMode;
+
+/**
+ * @brief Switch widget speaker play mode.
+ */
+typedef enum {
+    GDU_WIDGET_SPEAKER_PLAY_MODE_SINGLE_PLAY = 0,
+    GDU_WIDGET_SPEAKER_PLAY_MODE_LOOP_PLAYBACK = 1,
+} E_GduWidgetSpeakerPlayMode;
+
+/**
+ * @brief Switch widget speaker state.
+ */
+typedef enum {
+    GDU_WIDGET_SPEAKER_STATE_IDEL = 0,
+    GDU_WIDGET_SPEAKER_STATE_TRANSMITTING = 1,
+    GDU_WIDGET_SPEAKER_STATE_PLAYING = 2,
+    GDU_WIDGET_SPEAKER_STATE_ERROR = 3,
+    GDU_WIDGET_SPEAKER_STATE_IN_TTS_CONVERSION = 4,
+} E_GduWidgetSpeakerState;
+
+/**
+ * @brief Switch widget speaker data type.
+ */
+typedef enum {
+    GDU_WIDGET_SPEAKER_MP3 = 0,
+    GDU_WIDGET_SPEAKER_OPUS = 1,
+    GDU_WIDGET_SPEAKER_AAC = 2,
+} E_GduWidgetSpeakerDataType;
+
+
+typedef enum {
+    GDU_WIDGET_SPEAKER_RATE_8K = 0,
+	GDU_WIDGET_SPEAKER_RATE_12K = 1,
+    GDU_WIDGET_SPEAKER_RATE_16K = 2,
+	GDU_WIDGET_SPEAKER_RATE_22K = 3,
+	GDU_WIDGET_SPEAKER_RATE_24K = 4,
+	GDU_WIDGET_SPEAKER_RATE_32K = 5,
+	GDU_WIDGET_SPEAKER_RATE_44K = 6,
+	GDU_WIDGET_SPEAKER_RATE_48K = 7,
+	GDU_WIDGET_SPEAKER_RATE_96K = 8,
+}E_GduWidgetSpeakerSampling;
+
+typedef enum {
+    GDU_WIDGET_SPEAKER_RATE_SINGLE = 0,
+    GDU_WIDGET_SPEAKER_RATE_DOUBLE = 1,
+}E_GduWidgetSpeakerSoundTrack;
+
+typedef enum {
+    GDU_WIDGET_SPEAKER_DIGIT_8 = 0,
+    GDU_WIDGET_SPEAKER_DIGIT_16 = 1,
+	GDU_WIDGET_SPEAKER_DIGIT_32 = 2,
+}E_GduWidgetSpeakerDigit;
+
+/**
+ * @brief Switch widget transmit data event.
+ */
+typedef enum {
+    GDU_WIDGET_TRANSMIT_DATA_EVENT_START,
+    GDU_WIDGET_TRANSMIT_DATA_EVENT_TRANSMIT,
+    GDU_WIDGET_TRANSMIT_DATA_EVENT_FINISH,
+    GDU_WIDGET_TRANSMIT_DATA_EVENT_ABORT,
+} E_GduWidgetTransmitDataEvent;
 
 /**
  * @brief Widget file binary array.
@@ -131,6 +203,57 @@ typedef struct {
     /*! the user data need used in SetWidgetValue and GetWidgetValue callback function. */
     void *userData;
 } T_GduWidgetHandlerListItem;
+
+typedef struct {
+    union {
+        /*! When event is 'GDU_WIDGET_TRANSMIT_DATA_EVENT_START', the buf contains file name, uuid and decoder bitrate. */
+        struct {
+            uint8_t fileName[32];
+            uint8_t fileUuid[32];
+            uint32_t fileDecodeBitrate;
+        } transDataStartContent;
+
+        /*! When event is 'GDU_WIDGET_TRANSMIT_DATA_EVENT_START', the buf contains file md5 sum. */
+        struct {
+            uint8_t md5Sum[16];
+        } transDataEndContent;
+    };
+} T_GduWidgetTransDataContent;
+
+typedef struct {
+    E_GduWidgetSpeakerState state;
+    E_GduWidgetSpeakerWorkMode workMode;
+    E_GduWidgetSpeakerPlayMode playMode;
+    uint8_t volume;
+} T_GduWidgetSpeakerState;
+
+typedef struct {
+    E_GduWidgetSpeakerDataType dataType;
+    E_GduWidgetSpeakerSampling samplingRate;
+    E_GduWidgetSpeakerSoundTrack soundTrack;
+    E_GduWidgetSpeakerDigit digit;
+} T_GduWidgetSpeakerParam;
+
+typedef struct {
+    T_GduReturnCode (*GetSpeakerState)(T_GduWidgetSpeakerState *speakerState);
+    T_GduReturnCode (*SetWorkMode)(E_GduWidgetSpeakerWorkMode workMode);
+    T_GduReturnCode (*SetPlayMode)(E_GduWidgetSpeakerPlayMode playMode);
+    T_GduReturnCode (*SetVolume)(uint8_t volume);
+
+    T_GduReturnCode (*StartPlay)(void);
+    T_GduReturnCode (*StopPlay)(void);
+
+    T_GduReturnCode (*ReceiveTtsData)(E_GduWidgetTransmitDataEvent event,
+                                      uint32_t offset, uint8_t *buf, uint16_t size);
+    T_GduReturnCode (*ReceiveVoiceData)(E_GduWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size);
+
+    T_GduReturnCode (*ReceiveMp3VoiceData)(E_GduWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size);
+    T_GduReturnCode (*ReceiveRealTimeVoiceData)(E_GduWidgetTransmitDataEvent event,
+                                        uint32_t offset, uint8_t *buf, uint16_t size);
+    T_GduReturnCode (*GetSpeakerParam)(T_GduWidgetSpeakerParam *speakerParam);
+} T_GduWidgetSpeakerHandler;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -215,6 +338,14 @@ T_GduReturnCode GduWidgetFloatingWindow_ShowMessage(const char *str);
  */
 T_GduReturnCode GduWidgetFloatingWindow_GetChannelState(T_GduDataChannelState *state);
 
+/**
+ * @brief Register the handler for widget speaker function interfaces.
+ * @note This interface registers the widget speaker function interface, including speaker settings, play operation,
+ * speaker status interface.
+ * @param widgetSpeakerHandler: pointer to the handler for widget speaker functions.
+ * @return Execution result.
+ */
+T_GduReturnCode GduWidget_RegSpeakerHandler(const T_GduWidgetSpeakerHandler *widgetSpeakerHandler);
 #ifdef __cplusplus
 }
 #endif

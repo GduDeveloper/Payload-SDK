@@ -57,7 +57,8 @@
 //#include "positioning/test_positioning.h"
 #include "upgrade/test_upgrade.h"
 #include "power_management/test_power_management.h"
-
+#include "hms/test_hms.h"
+#include "payload_msg/test_payload_msg.h"
 /* Private constants ---------------------------------------------------------*/
 #define RUN_INDICATE_TASK_FREQ_1HZ        1
 #define RUN_INDICATE_TASK_FREQ_0D1HZ      0.1f
@@ -163,19 +164,19 @@ void GduUser_StartTask(void const *argument)
         goto out;
     }
 
-    if (aircraftInfoBaseInfo.mountPosition == GDU_MOUNT_POSITION_EXTENSION_PORT) {
-#if GDU_EXTENSION_PORT_SUPPORT
-        returnCode = GduTest_DataTransmissionStartService();
-        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("data transmission init error");
-        }
-
-        returnCode = GduTest_WidgetStartService();
-        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("widget sample init error");
-        }
+	returnCode = GduCore_ApplicationStart();
+	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+		USER_LOG_ERROR("start sdk application error");
+	}
+    
+    USER_LOG_DEBUG("%s", GduCode_GetProductAlias());
+#ifdef CONFIG_MODULE_PAYLOAD_MSG_ON
+		returnCode = GduTest_PayloadMsgStartService();
+		if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+			USER_LOG_ERROR("payload msg error");
+		}
 #endif
-    } else {
+
 #ifdef CONFIG_MODULE_SAMPLE_POWER_MANAGEMENT_ON
         T_GduTestApplyHighPowerHandler applyHighPowerHandler = {
             .pinInit = GduTest_HighPowerApplyPinInit,
@@ -227,6 +228,8 @@ void GduUser_StartTask(void const *argument)
         if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
             USER_LOG_ERROR("data subscription sample init error\n");
         }
+
+		//GduTest_HmsRunSample();
 #endif
 
 #ifdef CONFIG_MODULE_SAMPLE_GIMBAL_ON
@@ -317,12 +320,6 @@ void GduUser_StartTask(void const *argument)
 			printf("psdk upgrade init error");
 		}
 #endif
-	}
-
-	returnCode = GduCore_ApplicationStart();
-	if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-		USER_LOG_ERROR("start sdk application error");
-	}
 
 	while (1) {
 		Osal_TaskSleepMs(1000);
@@ -344,6 +341,7 @@ void GduUser_MonitorTask(void const *argument)
 	static uint32_t runIndicateTaskStep = 0;
 	T_UartBufferState readBufferState = {0};
 	T_UartBufferState writeBufferState = {0};
+	uint32_t loopCnt = 0;
 #if (configUSE_TRACE_FACILITY == 1)
 	int32_t i = 0;
 	int32_t j = 0;
@@ -358,29 +356,32 @@ void GduUser_MonitorTask(void const *argument)
         Osal_TaskSleepMs(1000 / RUN_INDICATE_TASK_FREQ_1HZ);
 
         // report UART buffer state
+        if(loopCnt++ % 10 == 0)
+       	{
 #ifdef USING_UART_PORT_1
-        UART_GetBufferState(UART_NUM_1, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart1 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart1 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+	        UART_GetBufferState(UART_NUM_1, &readBufferState, &writeBufferState);
+	        USER_LOG_DEBUG("Uart1 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+	                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+	         USER_LOG_DEBUG("Uart1 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+	                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
 
 #ifdef USING_UART_PORT_2
-        UART_GetBufferState(UART_NUM_2, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart2 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart2 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+	        UART_GetBufferState(UART_NUM_2, &readBufferState, &writeBufferState);
+	        USER_LOG_DEBUG("Uart2 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+	                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+	         USER_LOG_DEBUG("Uart2 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+	                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
 
 #ifdef USING_UART_PORT_3
-        UART_GetBufferState(UART_NUM_3, &readBufferState, &writeBufferState);
-        // USER_LOG_DEBUG("Uart3 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
-        // USER_LOG_DEBUG("Uart3 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
-        //                writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
+	        UART_GetBufferState(UART_NUM_3, &readBufferState, &writeBufferState);
+	         USER_LOG_DEBUG("Uart3 read buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+	                        readBufferState.countOfLostData, readBufferState.maxUsedCapacityOfBuffer);
+	         USER_LOG_DEBUG("Uart3 write buffer state: countOfLostData %d, maxUsedCapacityOfBuffer %d.",
+                        writeBufferState.countOfLostData, writeBufferState.maxUsedCapacityOfBuffer);
 #endif
+		}
 
         // report system performance information.
         // Attention: report system performance part is not intended for normal application runtime use but as a debug aid.

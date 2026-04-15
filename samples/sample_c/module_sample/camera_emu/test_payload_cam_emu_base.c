@@ -61,9 +61,9 @@
 
 // Attention: you can select which camera function you want to run, default: all on.
 #define USER_CAMERA_EMU_METERING_ON                1
-//#define USER_CAMERA_EMU_FOCUS_ON                   1
-//#define USER_CAMERA_EMU_HYBRID_ZOOM_ON             1
-//#define USER_CAMERA_EMU_TAP_ZOOM_ON                1
+#define USER_CAMERA_EMU_FOCUS_ON                   1
+#define USER_CAMERA_EMU_HYBRID_ZOOM_ON             1
+#define USER_CAMERA_EMU_TAP_ZOOM_ON                1
 
 /* Private types -------------------------------------------------------------*/
 typedef struct {
@@ -134,6 +134,7 @@ static T_GduReturnCode SetPhotoTimeIntervalSettings(T_GduCameraPhotoTimeInterval
 static T_GduReturnCode GetPhotoTimeIntervalSettings(T_GduCameraPhotoTimeIntervalSettings *settings);
 static T_GduReturnCode GetSDCardState(T_GduCameraSDCardState *sdCardState);
 static T_GduReturnCode FormatSDCard(void);
+static T_GduReturnCode setPhotoStorageParam(T_GduCameraStoreParam param);
 
 static T_GduReturnCode SetMeteringMode(E_GduCameraMeteringMode mode);
 static T_GduReturnCode GetMeteringMode(E_GduCameraMeteringMode *mode);
@@ -280,6 +281,7 @@ out:
 
 static T_GduReturnCode StartShootPhoto(void)
 {
+	static uint16_t ShootPhoto = 0;
     T_GduReturnCode returnCode;
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
 
@@ -289,7 +291,9 @@ static T_GduReturnCode StartShootPhoto(void)
         return returnCode;
     }
 
-    USER_LOG_INFO("start shoot photo");
+	ShootPhoto ++;
+
+    USER_LOG_INFO("start shoot photo *** %d ",ShootPhoto);
     s_cameraState.isStoring = true;
 
     if (s_cameraShootPhotoMode == GDU_CAMERA_SHOOT_PHOTO_MODE_SINGLE) {
@@ -521,6 +525,16 @@ static T_GduReturnCode FormatSDCard(void)
         USER_LOG_ERROR("unlock mutex error: 0x%08llX.", returnCode);
         return returnCode;
     }
+
+    return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
+}
+
+static T_GduReturnCode setPhotoStorageParam(T_GduCameraStoreParam param)
+{
+    T_GduReturnCode returnCode;
+    T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
+
+	//TODO: set photo store directory
 
     return GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS;
 }
@@ -1268,6 +1282,7 @@ T_GduReturnCode GduTest_CameraEmuBaseStartService(void)
     s_commonHandler.GetPhotoTimeIntervalSettings = GetPhotoTimeIntervalSettings;
     s_commonHandler.GetSDCardState = GetSDCardState;
     s_commonHandler.FormatSDCard = FormatSDCard;
+    s_commonHandler.setPhotoStorageParam = setPhotoStorageParam;
 
     returnCode = GduPayloadCamera_RegCommonHandler(&s_commonHandler);
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
@@ -1320,7 +1335,7 @@ T_GduReturnCode GduTest_CameraEmuBaseStartService(void)
 
     /* Register the camera optical zoom handler */
     s_opticalZoomHandler.SetOpticalZoomFocalLength = SetOpticalZoomFocalLength;//恢复默认值
-    s_opticalZoomHandler.GetOpticalZoomFocalLength = GetOpticalZoomFocalLength;
+    s_opticalZoomHandler.GetOpticalZoomFocalLength = GetOpticalZoomFocalLength;//设置光学变焦焦距
     s_opticalZoomHandler.GetOpticalZoomFactor = GduTest_CameraGetOpticalZoomFactor;//获取变倍因数
     s_opticalZoomHandler.GetOpticalZoomSpec = GetOpticalZoomSpec;//获取变焦范围和步长参数
     s_opticalZoomHandler.StartContinuousOpticalZoom = StartContinuousOpticalZoom;//启动变焦

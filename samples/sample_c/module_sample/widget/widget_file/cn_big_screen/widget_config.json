@@ -94,6 +94,8 @@
   },
   "config_interface": {
     "text_input_box": {
+      "widget_index": 10,
+      "widget_type": "text_input_box",
       "widget_name": "文本输入框",
       "placeholder_text": "请输入消息",
       "is_enable": true

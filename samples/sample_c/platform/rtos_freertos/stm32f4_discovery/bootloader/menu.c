@@ -47,7 +47,7 @@
   * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
   * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
-  * @statement DJI has modified some symbols' name.
+  * @statement GDU has modified some symbols' name.
   *
   ******************************************************************************
   */

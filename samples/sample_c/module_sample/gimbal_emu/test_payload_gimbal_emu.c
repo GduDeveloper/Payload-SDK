@@ -112,15 +112,15 @@ T_GduReturnCode GduTest_GimbalStartService(void)
     s_calibrationState.calibratingFlag = false;
     s_calibrationState.lastCalibrationResult = true;
 
-    s_commonHandler.GetSystemState = GetSystemState;//获取云台姿态信息
-    s_commonHandler.GetAttitudeInformation = GetAttitudeInformation;//
+    s_commonHandler.GetSystemState = GetSystemState;//
+    s_commonHandler.GetAttitudeInformation = GetAttitudeInformation;//获取云台姿态信息
     s_commonHandler.GetCalibrationState = GetCalibrationState;//获取校准状态
     s_commonHandler.GetRotationSpeed = GetRotationSpeed;//获取云台转动速度
     s_commonHandler.GetJointAngle = GetJointAngle;//获取云台关节角度
     s_commonHandler.Rotate = GduTest_GimbalRotate;//控制云台转动
     s_commonHandler.StartCalibrate = StartCalibrate;//启动校准
     s_commonHandler.SetControllerSmoothFactor = SetControllerSmoothFactor;//设置控制器平滑因子
-    s_commonHandler.SetPitchRangeExtensionEnabled = SetPitchRangeExtensionEnabled;//设置俯仰范围***
+    s_commonHandler.SetPitchRangeExtensionEnabled = SetPitchRangeExtensionEnabled;//范围扩展启动，设置俯仰范围***
     s_commonHandler.SetControllerMaxSpeedPercentage = SetControllerMaxSpeedPercentage; //设置最大速度控制百分比
     s_commonHandler.RestoreFactorySettings = RestoreFactorySettings;//恢复出厂设置
     s_commonHandler.SetMode = SetMode;
@@ -208,10 +208,10 @@ T_GduReturnCode GduTest_GimbalRotate(E_GduGimbalRotationMode rotationMode,
     T_GduAttitude3d speedTemp = {0};
     T_GduOsalHandler *osalHandler = GduPlatform_GetOsalHandler();
 
-    USER_LOG_DEBUG("gimbal rotation value invalid flag: pitch %d, roll %d, yaw %d.",
-                   rotationProperty.rotationValueInvalidFlag.pitch,
-                   rotationProperty.rotationValueInvalidFlag.roll,
-                   rotationProperty.rotationValueInvalidFlag.yaw);
+//    USER_LOG_DEBUG("gimbal rotation value invalid flag: pitch %d, roll %d, yaw %d.",
+//                   rotationProperty.rotationValueInvalidFlag.pitch,
+//                   rotationProperty.rotationValueInvalidFlag.roll,
+//                   rotationProperty.rotationValueInvalidFlag.yaw);
 
     if (osalHandler->MutexLock(s_attitudeMutex) != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("mutex lock error");
@@ -316,8 +316,8 @@ T_GduReturnCode GduTest_GimbalRotate(E_GduGimbalRotationMode rotationMode,
 
             break;
         case GDU_GIMBAL_ROTATION_MODE_SPEED:
-            USER_LOG_INFO("gimbal rotate speed: pitch %d, roll %d, yaw %d.", rotationValue.pitch,
-                          rotationValue.roll, rotationValue.yaw);
+//            USER_LOG_INFO("gimbal rotate speed: pitch %d, roll %d, yaw %d.", rotationValue.pitch,
+//                          rotationValue.roll, rotationValue.yaw);
 
             if (s_rotatingFlag == true && s_controlType == TEST_GIMBAL_CONTROL_TYPE_ANGLE) {
                 USER_LOG_WARN("gimbal is rotating.");
@@ -393,13 +393,13 @@ static void *UserGimbal_Task(void *arg)
             goto out2;
         }
 
-        if (USER_UTIL_IS_WORK_TURN(step, 1, PAYLOAD_GIMBAL_TASK_FREQ)) {
-            USER_LOG_DEBUG("gimbal attitude: pitch %d, roll %d, yaw %d.", s_attitudeInformation.attitude.pitch,
-                           s_attitudeInformation.attitude.roll, s_attitudeInformation.attitude.yaw);
+        // if (USER_UTIL_IS_WORK_TURN(step, 1, PAYLOAD_GIMBAL_TASK_FREQ)) {
+        //     USER_LOG_DEBUG("gimbal attitude: pitch %d, roll %d, yaw %d.", s_attitudeInformation.attitude.pitch,
+        //                    s_attitudeInformation.attitude.roll, s_attitudeInformation.attitude.yaw);
 
-            USER_LOG_DEBUG("gimbal fine tune: pitch %d, roll %d, yaw %d.", s_systemState.fineTuneAngle.pitch,
-                           s_systemState.fineTuneAngle.roll, s_systemState.fineTuneAngle.yaw);
-        }
+        //     USER_LOG_DEBUG("gimbal fine tune: pitch %d, roll %d, yaw %d.", s_systemState.fineTuneAngle.pitch,
+        //                    s_systemState.fineTuneAngle.roll, s_systemState.fineTuneAngle.yaw);
+        // }
 
 #if 0
         // update aircraft attitude

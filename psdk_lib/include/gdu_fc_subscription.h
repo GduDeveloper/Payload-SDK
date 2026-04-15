@@ -520,7 +520,13 @@ typedef enum {
      */
     GDU_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX2 = GDU_DATA_SUBSCRIPTION_TOPIC(GDU_DATA_SUBSCRIPTION_MODULE_FC,
                                                                                        47),
-
+    /*!
+     * @brief euler angle information topic name. Please refer to ::T_GduAttitude3d for information about data structure.
+     * @datastruct \ref T_GduAttitude3d
+     */
+    GDU_FC_SUBSCRIPTION_TOPIC_EULER_ANGLE_INFO = GDU_DATA_SUBSCRIPTION_TOPIC(GDU_DATA_SUBSCRIPTION_MODULE_FC,
+                                                                                       48),
+                                                                                       
     /*! Total number of topics that can be subscribed. */
     GDU_FC_SUBSCRIPTION_TOPIC_TOTAL_NUMBER,
 } E_GduFcSubscriptionTopic;
@@ -691,7 +697,7 @@ typedef T_GduVector3f T_GduFcSubscriptionAccelerationBody;
 typedef T_GduVector3f T_GduFcSubscriptionAccelerationRaw;
 
 /**
- * @brief GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY topic data structure.
+ * @brief GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY topic data structure. cm/s
  */
 typedef struct Velocity {
     /*! Velocity of aircraft. */
@@ -1078,6 +1084,12 @@ typedef struct RelativePosition {
     uint8_t leftHealth: 1;  /*!< Left sensor flag: 0 - not working, 1 - working */
     uint8_t upHealth: 1;    /*!< Up sensor health flag: 0 - not working, 1 - working */
     uint8_t reserved: 2;    /*!< Reserved sensor health flag*/
+    bool isAvoid_down;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_front;           /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_right;           /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_back;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_left;            /*!< 0:not avoid 1:avoid  */
+    bool isAvoid_up;              /*!< 0:not avoid 1:avoid  */
 } T_GduFcSubscriptionAvoidData;
 
 /**

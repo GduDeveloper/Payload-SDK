@@ -91,10 +91,6 @@ static void GduTest_FlightControlHorizCommandLimit(gdu_f32_t speedFactor, gdu_f3
 static gdu_f32_t GduTest_FlightControlVectorNorm(T_GduTestFlightControlVector3f v);
 static T_GduReturnCode
 GduTest_FlightControlJoystickCtrlAuthSwitchEventCallback(T_GduFlightControllerJoystickCtrlAuthorityEventInfo eventData);
-static bool
-GduTest_FlightControlMoveByPositionOffset(T_GduTestFlightControlVector3f offsetDesired, float yawDesiredInDeg,
-                                          float posThresholdInM,
-                                          float yawThresholdInDeg);
 static void
 GduTest_FlightControlVelocityAndYawRateCtrl(T_GduTestFlightControlVector3f offsetDesired, float yawRate,
                                             uint32_t timeMs);
@@ -182,14 +178,7 @@ T_GduReturnCode GduTest_FlightControlInit(void)
         return returnCode;
     }
 
-    returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_QUATERNION,
-                                                  GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
-                                                  NULL);
 
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Subscribe topic quaternion failed,error code:0x%08llX", returnCode);
-        return returnCode;
-    }
 
     returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_POSITION_FUSED,
                                                   GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
@@ -197,32 +186,6 @@ T_GduReturnCode GduTest_FlightControlInit(void)
 
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Subscribe topic position fused failed,error code:0x%08llX", returnCode);
-        return returnCode;
-    }
-
-    returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_ALTITUDE_FUSED,
-                                                  GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
-                                                  NULL);
-
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Subscribe topic altitude fused failed,error code:0x%08llX", returnCode);
-        return returnCode;
-    }
-
-    returnCode = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_ALTITUDE_OF_HOMEPOINT,
-                                                  GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
-                                                  NULL);
-
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Subscribe topic altitude of home point failed,error code:0x%08llX", returnCode);
-        return returnCode;
-    }
-
-    returnCode = GduFlightController_RegJoystickCtrlAuthorityEventCallback(
-        GduTest_FlightControlJoystickCtrlAuthSwitchEventCallback);
-
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS && returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_NONSUPPORT) {
-        USER_LOG_ERROR("Register joystick control authority event callback failed,error code:0x%08llX", returnCode);
         return returnCode;
     }
 
@@ -256,14 +219,6 @@ void GduTest_FlightControlTakeOffLandingSample()
 
     USER_LOG_INFO("Flight control takeoff-landing sample start");
     GduTest_WidgetLogAppend("Flight control takeoff-landing sample start");
-    USER_LOG_INFO("--> Step 1: Obtain joystick control authority.");
-    GduTest_WidgetLogAppend("--> Step 1: Obtain joystick control authority.");
-    returnCode = GduFlightController_ObtainJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Obtain joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
 
     USER_LOG_INFO("--> Step 2: Take off\r\n");
     GduTest_WidgetLogAppend("--> Step 2: Take off\r\n");
@@ -284,14 +239,6 @@ void GduTest_FlightControlTakeOffLandingSample()
     USER_LOG_INFO("Successful landing\r\n");
     GduTest_WidgetLogAppend("Successful landing\r\n");
 
-    USER_LOG_INFO("--> Step 4: Release joystick authority");
-    GduTest_WidgetLogAppend("--> Step 4: Release joystick authority");
-    returnCode = GduFlightController_ReleaseJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Release joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-
 out:
     USER_LOG_INFO("Flight control takeoff-landing sample end");
     GduTest_WidgetLogAppend("Flight control takeoff-landing sample end");
@@ -304,15 +251,6 @@ void GduTest_FlightControlPositionControlSample()
     USER_LOG_INFO("Flight control move-by-position sample start");
     GduTest_WidgetLogAppend("Flight control move-by-position sample start");
 
-    USER_LOG_INFO("--> Step 1: Obtain joystick control authority.");
-    GduTest_WidgetLogAppend("--> Step 1: Obtain joystick control authority.");
-    returnCode = GduFlightController_ObtainJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Obtain joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
-
     USER_LOG_INFO("--> Step 2: Take off\r\n");
     GduTest_WidgetLogAppend("--> Step 2: Take off\r\n");
     if (!GduTest_FlightControlMonitoredTakeoff()) {
@@ -322,28 +260,6 @@ void GduTest_FlightControlPositionControlSample()
     USER_LOG_INFO("Successful take off\r\n");
     GduTest_WidgetLogAppend("Successful take off\r\n");
 
-    USER_LOG_INFO("--> Step 3: Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point");
-    GduTest_WidgetLogAppend("--> Step 3: Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {0, 6, 6}, 30, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:0(m), earth:6(m), up:6(m) , yaw:30(degree) from current point failed");
-        goto out;
-    };
-
-    USER_LOG_INFO("--> Step 4: Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point");
-    GduTest_WidgetLogAppend(
-        "--> Step 4: Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {6, 0, -3}, -30, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:6(m), earth:0(m), up:-3(m) , yaw:-30(degree) from current point failed");
-        goto out;
-    };
-
-    USER_LOG_INFO("--> Step 5: Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point");
-    GduTest_WidgetLogAppend("--> Step 5: Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {-6, -6, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:-6(m), earth:-6(m), up:0(m) , yaw:0(degree) from current point failed");
-        goto out;
-    }
-
     USER_LOG_INFO("--> Step 6: Landing\r\n");
     GduTest_WidgetLogAppend("--> Step 6: Landing\r\n");
     if (!GduTest_FlightControlMonitoredLanding()) {
@@ -352,14 +268,6 @@ void GduTest_FlightControlPositionControlSample()
     }
     USER_LOG_INFO("Successful landing\r\n");
     GduTest_WidgetLogAppend("Successful landing\r\n");
-
-    USER_LOG_INFO("--> Step 7: Release joystick authority");
-    GduTest_WidgetLogAppend("--> Step 7: Release joystick authority");
-    returnCode = GduFlightController_ReleaseJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Release joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
 
 out:
     USER_LOG_INFO("Flight control move-by-position sample end");
@@ -373,15 +281,6 @@ void GduTest_FlightControlGoHomeForceLandingSample()
     USER_LOG_INFO("Flight control go-home-force-landing sample start");
     GduTest_WidgetLogAppend("Flight control go-home-force-landing sample start");
 
-    USER_LOG_INFO("--> Step 1: Obtain joystick control authority");
-    GduTest_WidgetLogAppend("--> Step 1: Obtain joystick control authority");
-    returnCode = GduFlightController_ObtainJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Obtain joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
-
     USER_LOG_INFO("--> Step 2: Take off\r\n");
     GduTest_WidgetLogAppend("--> Step 2: Take off\r\n");
     if (!GduTest_FlightControlMonitoredTakeoff()) {
@@ -390,20 +289,6 @@ void GduTest_FlightControlGoHomeForceLandingSample()
     }
     USER_LOG_INFO("Successful take off\r\n");
     GduTest_WidgetLogAppend("Successful take off\r\n");
-
-    USER_LOG_INFO("--> Step 3: Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point");
-    GduTest_WidgetLogAppend("--> Step 3: Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {0, 0, 30}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:0(m), earth:0(m), up:30(m) , yaw:0(degree) from current point failed");
-        goto out;
-    }
-
-    USER_LOG_INFO("--> Step 4: Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    GduTest_WidgetLogAppend("--> Step 4: Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {10, 0, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:10(m), earth:0(m), up:0(m) , yaw:0(degree) from current point failed");
-        goto out;
-    }
 
     USER_LOG_INFO("--> Step 5: Set aircraft current position as new home location!");
     GduTest_WidgetLogAppend("--> Step 5: Set aircraft current position as new home location!");
@@ -431,13 +316,6 @@ void GduTest_FlightControlGoHomeForceLandingSample()
     USER_LOG_INFO("Current go home altitude is %d m\r\n", goHomeAltitude);
     GduTest_WidgetLogAppend("Current go home altitude is %d m\r\n", goHomeAltitude);
 
-    USER_LOG_INFO("--> Step 7: Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    GduTest_WidgetLogAppend("--> Step 7: Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point");
-    if (!GduTest_FlightControlMoveByPositionOffset((T_GduTestFlightControlVector3f) {20, 0, 0}, 0, 0.8, 1)) {
-        USER_LOG_ERROR("Move to north:20(m), earth:0(m), up:0(m) , yaw:0(degree) from current point failed");
-        goto out;
-    }
-
     USER_LOG_INFO("--> Step 8: Go home and confirm force landing\r\n");
     GduTest_WidgetLogAppend("--> Step 8: Go home and confirm force landing\r\n");
     if (!GduTest_FlightControlGoHomeAndConfirmLanding()) {
@@ -446,14 +324,6 @@ void GduTest_FlightControlGoHomeForceLandingSample()
     }
     USER_LOG_INFO("Successful go home and confirm force landing\r\n");
     GduTest_WidgetLogAppend("Successful go home and confirm force landing\r\n");
-
-    USER_LOG_INFO("-> Step 9: Release joystick authority");
-    GduTest_WidgetLogAppend("-> Step 9: Release joystick authority");
-    returnCode = GduFlightController_ReleaseJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Release joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
 
 out:
     USER_LOG_INFO("Flight control go-home-force-landing sample end");
@@ -466,15 +336,6 @@ void GduTest_FlightControlVelocityControlSample()
 
     USER_LOG_INFO("Flight control move-by-velocity sample start");
     GduTest_WidgetLogAppend("Flight control move-by-velocity sample start");
-
-    USER_LOG_INFO("--> Step 1: Obtain joystick control authority");
-    GduTest_WidgetLogAppend("--> Step 1: Obtain joystick control authority");
-    returnCode = GduFlightController_ObtainJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Obtain joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
 
     USER_LOG_INFO("--> Step 2: Take off\r\n");
     GduTest_WidgetLogAppend("--> Step 2: Take off\r\n");
@@ -498,12 +359,6 @@ void GduTest_FlightControlVelocityControlSample()
         USER_LOG_ERROR("Emergency brake failed, error code: 0x%08X", returnCode);
         goto out;
     }
-    s_osalHandler->TaskSleepMs(2000);
-    returnCode = GduFlightController_CancelEmergencyBrakeAction();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Cancel emergency brake action failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
 
     USER_LOG_INFO(
         "--> Step 5: Move with north:-1.5(m/s), earth:2(m/s), up:0(m/s), yaw:20(deg/s) from current point for 2s!");
@@ -518,12 +373,7 @@ void GduTest_FlightControlVelocityControlSample()
         USER_LOG_ERROR("Emergency brake failed, error code: 0x%08X", returnCode);
         goto out;
     }
-    s_osalHandler->TaskSleepMs(2000);
-    returnCode = GduFlightController_CancelEmergencyBrakeAction();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Cancel emergency brake action failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
+
 
     USER_LOG_INFO(
         "--> Step 7: Move with north:3(m/s), earth:0(m/s), up:0(m/s), yaw:0(deg/s) from current point for 2.5s!");
@@ -536,12 +386,6 @@ void GduTest_FlightControlVelocityControlSample()
     returnCode = GduFlightController_ExecuteEmergencyBrakeAction();
     if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
         USER_LOG_ERROR("Emergency brake failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(2000);
-    returnCode = GduFlightController_CancelEmergencyBrakeAction();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Cancel emergency brake action failed, error code: 0x%08X", returnCode);
         goto out;
     }
 
@@ -558,12 +402,6 @@ void GduTest_FlightControlVelocityControlSample()
         USER_LOG_ERROR("Emergency brake failed, error code: 0x%08X", returnCode);
         goto out;
     }
-    s_osalHandler->TaskSleepMs(2000);
-    returnCode = GduFlightController_CancelEmergencyBrakeAction();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Cancel emergency brake action failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
 
     USER_LOG_INFO("--> Step 11: Landing\r\n");
     GduTest_WidgetLogAppend("--> Step 11: Landing\r\n");
@@ -573,14 +411,6 @@ void GduTest_FlightControlVelocityControlSample()
     }
     USER_LOG_INFO("Successful landing\r\n");
     GduTest_WidgetLogAppend("Successful landing\r\n");
-
-    USER_LOG_INFO("--> Step 12: Release joystick authority");
-    GduTest_WidgetLogAppend("--> Step 12: Release joystick authority");
-    returnCode = GduFlightController_ReleaseJoystickCtrlAuthority();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Release joystick authority failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
 
 out:
     USER_LOG_INFO("Flight control move-by-velocity sample end");
@@ -603,51 +433,10 @@ void GduTest_FlightControlArrestFlyingSample()
     }
     s_osalHandler->TaskSleepMs(2000);
 
-    //you can replace with takeoff to test in air.
-    USER_LOG_INFO("--> Step 2: Turn on motors\r\n");
-    GduTest_WidgetLogAppend("--> Step 2: Turn on motors\r\n");
-    returnCode = GduFlightController_TurnOnMotors();
-    if (returnCode == GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Turn on motors successfully, but arrest-flying failed");
-        s_osalHandler->TaskSleepMs(4000);
-        USER_LOG_INFO("--> Step 3: Turn off motors\r\n");
-        GduTest_WidgetLogAppend("--> Step 3: Turn off motors\r\n");
-        returnCode = GduFlightController_TurnOffMotors();
-        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Turn off motors failed, error code: 0x%08X", returnCode);
-        }
-        goto out;
-    }
 
     USER_LOG_INFO("Turn on motors failed.Arrest-flying successfully\r\n");
     GduTest_WidgetLogAppend("Turn on motors failed.Arrest-flying successfully\r\n");
     s_osalHandler->TaskSleepMs(2000);
-
-    USER_LOG_INFO("--> Step 3: Disable arrest-flying");
-    GduTest_WidgetLogAppend("--> Step 3: Disable arrest-flying");
-    returnCode = GduFlightController_CancelArrestFlying();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Disable arrest-flying failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(2000);
-
-    USER_LOG_INFO("--> Step 4: Turn on motors\r\n");
-    GduTest_WidgetLogAppend("--> Step 4: Turn on motors\r\n");
-    returnCode = GduFlightController_TurnOnMotors();
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Turn on motors failed and disable arrest-flying failed, error code: 0x%08X", returnCode);
-        goto out;
-    } else {
-        USER_LOG_INFO("Turn on motors successfully and disable arrest-flying successfully\r\n");
-        s_osalHandler->TaskSleepMs(4000);
-        USER_LOG_INFO("--> Step 5: Turn off motors");
-        GduTest_WidgetLogAppend("--> Step 5: Turn off motors");
-        returnCode = GduFlightController_TurnOffMotors();
-        if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("Turn off motors failed, error code: 0x%08X", returnCode);
-        }
-    }
 
 out:
     USER_LOG_INFO("Flight control arrest-flying sample end");
@@ -802,26 +591,6 @@ void GduTest_FlightControlSetGetParamSample()
     USER_LOG_INFO("Current go home altitude is %d m\r\n", goHomeAltitude);
     s_osalHandler->TaskSleepMs(2000);
 
-    /*! Set rtk enable */
-    USER_LOG_INFO("--> Step 13: Set rtk enable status");
-    GduTest_WidgetLogAppend("--> Step 13: Set rtk enable status");
-    returnCode = GduFlightController_SetRtkPositionEnableStatus(GDU_FLIGHT_CONTROLLER_ENABLE_RTK_POSITION);
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Set rtk enable failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    s_osalHandler->TaskSleepMs(1000);
-
-    USER_LOG_INFO("--> Step 14: Get rtk enable status\r\n");
-    GduTest_WidgetLogAppend("--> Step 14: Get rtk enable status\r\n");
-    returnCode = GduFlightController_GetRtkPositionEnableStatus(&rtkEnableStatus);
-    if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Get rtk enable failed, error code: 0x%08X", returnCode);
-        goto out;
-    }
-    USER_LOG_INFO("Current rtk enable status is %d\r\n", rtkEnableStatus);
-    s_osalHandler->TaskSleepMs(1000);
-
     /*! Set rc lost action */
     USER_LOG_INFO("--> Step 15: Set rc lost action");
     GduTest_WidgetLogAppend("--> Step 15: Set rc lost action");
@@ -863,10 +632,10 @@ void GduTest_FlightControlSample(E_GduTestFlightCtrlSampleSelect flightCtrlSampl
             GduTest_FlightControlGoHomeForceLandingSample();
             break;
         }
-        case E_GDU_TEST_FLIGHT_CTRL_SAMPLE_SELECT_TAKE_OFF_VELOCITY_CTRL_LANDING: {
-            GduTest_FlightControlVelocityControlSample();
-            break;
-        }
+        // case E_GDU_TEST_FLIGHT_CTRL_SAMPLE_SELECT_TAKE_OFF_VELOCITY_CTRL_LANDING: {
+        //     GduTest_FlightControlVelocityControlSample();
+        //     break;
+        // }
         case E_GDU_TEST_FLIGHT_CTRL_SAMPLE_SELECT_ARREST_FLYING: {
             GduTest_FlightControlArrestFlyingSample();
             break;
@@ -1220,14 +989,6 @@ bool GduTest_FlightControlGoHomeAndConfirmLanding(void)
         }
     }
 
-    /*! Step 4: Confirm Landing */
-    USER_LOG_INFO("Start confirm Landing and avoid ground action");
-    gduStat = GduFlightController_StartConfirmLanding();
-    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Fail to execute confirm landing avoid ground action, error code: 0x%08X", gduStat);
-        return false;
-    }
-
     if (!GduTest_FlightControlCheckActionStarted(GDU_FC_SUBSCRIPTION_DISPLAY_MODE_AUTO_LANDING)) {
         return false;
     } else {
@@ -1312,102 +1073,6 @@ gdu_f32_t GduTest_FlightControlVectorNorm(T_GduTestFlightControlVector3f v)
     return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
 }
 
-bool
-GduTest_FlightControlMoveByPositionOffset(const T_GduTestFlightControlVector3f offsetDesired, float yawDesiredInDeg,
-                                          float posThresholdInM, float yawThresholdInDeg)
-{
-    int timeoutInMilSec = 20000;
-    int controlFreqInHz = 50;  // Hz
-    int cycleTimeInMs = 1000 / controlFreqInHz;
-    int outOfControlBoundsTimeLimit = 10 * cycleTimeInMs;    // 10 cycles
-    int withinControlBoundsTimeReqmt = 100 * cycleTimeInMs;  // 100 cycles
-    int elapsedTimeInMs = 0;
-    int withinBoundsCounter = 0;
-    int outOfBounds = 0;
-    int brakeCounter = 0;
-    int speedFactor = 2;
-
-    //! get origin position and relative height(from home point)of aircraft.
-    T_GduFcSubscriptionPositionFused originGPSPosition = GduTest_FlightControlGetValueOfPositionFused();
-    gdu_f32_t originHeightBaseHomePoint = GduTest_FlightControlGetValueOfRelativeHeight();
-    if (originHeightBaseHomePoint == -1) {
-        USER_LOG_ERROR("Relative height is invalid!");
-        return false;
-    }
-
-    T_GduFlightControllerJoystickMode joystickMode = {
-        GDU_FLIGHT_CONTROLLER_HORIZONTAL_POSITION_CONTROL_MODE,
-        GDU_FLIGHT_CONTROLLER_VERTICAL_POSITION_CONTROL_MODE,
-        GDU_FLIGHT_CONTROLLER_YAW_ANGLE_CONTROL_MODE,
-        GDU_FLIGHT_CONTROLLER_HORIZONTAL_GROUND_COORDINATE,
-        GDU_FLIGHT_CONTROLLER_STABLE_CONTROL_MODE_ENABLE,
-    };
-    GduFlightController_SetJoystickMode(joystickMode);
-
-    while (elapsedTimeInMs < timeoutInMilSec) {
-        T_GduFcSubscriptionPositionFused currentGPSPosition = GduTest_FlightControlGetValueOfPositionFused();
-        T_GduFcSubscriptionQuaternion currentQuaternion = GduTest_FlightControlGetValueOfQuaternion();
-        gdu_f32_t currentHeight = GduTest_FlightControlGetValueOfRelativeHeight();
-        if (originHeightBaseHomePoint == -1) {
-            USER_LOG_ERROR("Relative height is invalid!");
-            return false;
-        }
-
-        float yawInRad = GduTest_FlightControlQuaternionToEulerAngle(currentQuaternion).z;
-        //! get the vector between aircraft and origin point.
-
-        T_GduTestFlightControlVector3f localOffset = GduTest_FlightControlLocalOffsetFromGpsAndFusedHeightOffset(
-            currentGPSPosition,
-            originGPSPosition,
-            currentHeight,
-            originHeightBaseHomePoint);
-        //! get the vector between aircraft and target point.
-        T_GduTestFlightControlVector3f offsetRemaining = GduTest_FlightControlVector3FSub(offsetDesired, localOffset);
-
-        T_GduTestFlightControlVector3f positionCommand = offsetRemaining;
-        GduTest_FlightControlHorizCommandLimit(speedFactor, &positionCommand.x, &positionCommand.y);
-
-        T_GduFlightControllerJoystickCommand joystickCommand = {positionCommand.x, positionCommand.y,
-                                                                offsetDesired.z + originHeightBaseHomePoint,
-                                                                yawDesiredInDeg};
-        GduFlightController_ExecuteJoystickAction(joystickCommand);
-
-        if (GduTest_FlightControlVectorNorm(offsetRemaining) < posThresholdInM &&
-            fabs(yawInRad / s_degToRad - yawDesiredInDeg) < yawThresholdInDeg) {
-            //! 1. We are within bounds; start incrementing our in-bound counter
-            withinBoundsCounter += cycleTimeInMs;
-        } else {
-            if (withinBoundsCounter != 0) {
-                //! 2. Start incrementing an out-of-bounds counter
-                outOfBounds += cycleTimeInMs;
-            }
-        }
-        //! 3. Reset withinBoundsCounter if necessary
-        if (outOfBounds > outOfControlBoundsTimeLimit) {
-            withinBoundsCounter = 0;
-            outOfBounds = 0;
-        }
-        //! 4. If within bounds, set flag and break
-        if (withinBoundsCounter >= withinControlBoundsTimeReqmt) {
-            break;
-        }
-        s_osalHandler->TaskSleepMs(cycleTimeInMs);
-        elapsedTimeInMs += cycleTimeInMs;
-    }
-
-    while (brakeCounter < withinControlBoundsTimeReqmt) {
-        s_osalHandler->TaskSleepMs(cycleTimeInMs);
-        brakeCounter += cycleTimeInMs;
-    }
-
-    if (elapsedTimeInMs >= timeoutInMilSec) {
-        USER_LOG_ERROR("Task timeout!");
-        return false;
-    }
-
-    return true;
-}
-
 void GduTest_FlightControlVelocityAndYawRateCtrl(const T_GduTestFlightControlVector3f offsetDesired, float yawRate,
                                                  uint32_t timeMs)
 {
@@ -1425,7 +1090,6 @@ void GduTest_FlightControlVelocityAndYawRateCtrl(const T_GduTestFlightControlVec
         GDU_FLIGHT_CONTROLLER_STABLE_CONTROL_MODE_ENABLE,
     };
 
-    GduFlightController_SetJoystickMode(joystickMode);
     T_GduFlightControllerJoystickCommand joystickCommand = {offsetDesired.x, offsetDesired.y, offsetDesired.z,
                                                             yawRate};
 
