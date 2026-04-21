@@ -95,15 +95,6 @@ typedef struct {
 T_GduReturnCode GduPositioning_Init(void);
 
 /**
- * @brief Set task index, specifying a sequence number of operations, using to write to mark the file for some post-process
- * flows.
- * @details One operation may be a precise surveying and mapping task or ten exposures of camera. The default task index
- * is 0.
- * @param index: task index.
- */
-void GduPositioning_SetTaskIndex(uint8_t index);
-
-/**
  * @brief The interface is used to get the position of target points and other information (refer to
  * ::T_GduPositioningPositionInfo) based on the timestamp in aircraft time system when some events (positioning events) are
  * triggered. The function uses blocking mode.

@@ -256,7 +256,7 @@ typedef struct {
 } T_GduFlightControllerHomeLocation; // pack(1)
 
 typedef struct {
-    char serialNum[16];
+    char serialNum[32];
 } T_GduFlightControllerGeneralInfo;
 #pragma pack()
 

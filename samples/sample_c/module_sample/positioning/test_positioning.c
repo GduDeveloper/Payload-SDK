@@ -62,7 +62,6 @@ T_GduReturnCode GduTest_PositioningStartService(void)
     }
 
     USER_LOG_DEBUG("positioning start service");
-    GduPositioning_SetTaskIndex(0);
 
     if (osalHandler->TaskCreate("user_positioning_task", GduTest_PositioningTask,
                                 POSITIONING_TASK_STACK_SIZE, NULL, &s_userPositioningThread) !=

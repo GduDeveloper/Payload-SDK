@@ -133,12 +133,6 @@ T_GduReturnCode GduTest_FcSubscriptionRunSample(void)
     }
 
     USER_LOG_INFO("--> Step 2: Subscribe the topics of quaternion, velocity and gps position");
-    gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_QUATERNION, GDU_DATA_SUBSCRIPTION_TOPIC_10_HZ,
-                                               GduTest_FcSubscriptionReceiveQuaternionCallback);
-    if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-        USER_LOG_ERROR("Subscribe topic quaternion error.");
-        return GDU_ERROR_SYSTEM_MODULE_CODE_UNKNOWN;
-    }
 
     gduStat = GduFcSubscription_SubscribeTopic(GDU_FC_SUBSCRIPTION_TOPIC_VELOCITY, GDU_DATA_SUBSCRIPTION_TOPIC_1_HZ,
                                                NULL);
@@ -190,20 +184,6 @@ T_GduReturnCode GduTest_FcSubscriptionRunSample(void)
         } else {
             USER_LOG_INFO(
                 "battery single info index1: capacity percent = %ld% voltage = %ldV temperature = %.2f degree.",
-                singleBatteryInfo.batteryCapacityPercent,
-                singleBatteryInfo.currentVoltage / 1000,
-                (gdu_f32_t) singleBatteryInfo.batteryTemperature / 10);
-        }
-
-        gduStat = GduFcSubscription_GetLatestValueOfTopic(GDU_FC_SUBSCRIPTION_TOPIC_BATTERY_SINGLE_INFO_INDEX2,
-                                                          (uint8_t *) &singleBatteryInfo,
-                                                          sizeof(T_GduFcSubscriptionSingleBatteryInfo),
-                                                          &timestamp);
-        if (gduStat != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
-            USER_LOG_ERROR("get value of topic battery single info index2 error.");
-        } else {
-            USER_LOG_INFO(
-                "battery single info index2: capacity percent = %ld% voltage = %ldV temperature = %.2f degree.\r\n",
                 singleBatteryInfo.batteryCapacityPercent,
                 singleBatteryInfo.currentVoltage / 1000,
                 (gdu_f32_t) singleBatteryInfo.batteryTemperature / 10);
