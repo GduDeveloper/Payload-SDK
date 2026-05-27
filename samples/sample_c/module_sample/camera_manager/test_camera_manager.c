@@ -1134,6 +1134,35 @@ T_GduReturnCode GduTest_CameraManagerRunSample(E_GduMountPosition mountPosition,
             }
             break;
         }
+        case E_GDU_TEST_CAMERA_MANAGER_SAMPLE_SELECT_SET_STREAM_SOURCE: {
+            USER_LOG_INFO("--> Function L: set stream source");
+            GduTest_WidgetLogAppend("--> Function L: set stream source");
+
+            returnCode = GduCameraManager_SetStreamSource(mountPosition,
+                                                                   GDU_CAMERA_MANAGER_SOURCE_WIDE_CAM);
+            if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera set stream source failed,"
+                               "error code: 0x%08X\r\n", mountPosition, returnCode);
+            }
+            USER_LOG_DEBUG("----------------------------set stream source to wide cam");
+            osalHandler->TaskSleepMs(5000);
+            returnCode = GduCameraManager_SetStreamSource(mountPosition,
+                                                                   GDU_CAMERA_MANAGER_SOURCE_IR_CAM);
+            if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera set stream source failed,"
+                               "error code: 0x%08X\r\n", mountPosition, returnCode);
+            }
+            USER_LOG_DEBUG("----------------------------set stream source to IR cam");
+            osalHandler->TaskSleepMs(5000);
+            returnCode = GduCameraManager_SetStreamSource(mountPosition,
+                                                                   GDU_CAMERA_MANAGER_SOURCE_ZOOM_CAM);
+            if (returnCode != GDU_ERROR_SYSTEM_MODULE_CODE_SUCCESS) {
+                USER_LOG_ERROR("Mounted position %d camera set stream source failed,"
+                               "error code: 0x%08X\r\n", mountPosition, returnCode);
+            }
+            USER_LOG_DEBUG("----------------------------set stream source to zoom cam");
+            break;
+        }
         default: {
             USER_LOG_ERROR("There is no valid command input!");
             break;
